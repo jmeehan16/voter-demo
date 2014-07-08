@@ -1,0 +1,13 @@
+{%extends "base.html" %}
+
+{% block title %}BikeSharePDX{% endblock %}
+
+{% block page_content %}
+Bikes page.
+{% if bike_id: %}
+    bike_id: {{ bike_id }}
+{% else %}
+    No bike_id.
+
+{% endif %} 
+{% endblock %}

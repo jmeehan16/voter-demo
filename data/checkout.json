@@ -1,0 +1,10 @@
+{
+    "station_id": 0,
+    "num_bikes": 2,
+    "num_docks": 2,
+    "bikes":
+    [
+        { "bike_id": 1 },
+        { "bike_id": 2 }
+    ]
+}

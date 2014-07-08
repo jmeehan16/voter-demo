@@ -1,0 +1,122 @@
+{%extends "base.html" %}
+
+{% block title %}Voter{% endblock %}
+
+{% block page_content %}
+    <div class="row">
+        <div class="col-sm-5" id="left">
+            <h1 class="text-center">
+            <table class="table">
+                <thead>
+                    <tr><Strong>S-Store</Strong></tr>
+                </thead>
+            </table>
+            </h1>
+        </div>
+    
+        <div class="col-sm-5" id="right">
+            <h1 class="text-center">
+            <table class="table">
+                <thead>
+                    <tr><Strong>H-Store</Strong></tr>
+                </thead>
+            </table>
+            </h1>
+        </div>
+    
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-5" id="left">
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>#</td><td><Strong>Top 3</Strong></td><td><Strong>Votes</Strong></td><td><Strong>%</Strong></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>{{ sstore_top3_1_name }}</td><td>{{ sstore_top3_1_votes }}</td><td>{{ sstore_top3_1_percentage }}</td></tr>
+                        <tr><td>2</td><td>{{ sstore_top3_2_name }}</td><td>{{ sstore_top3_2_votes }}</td><td>{{ sstore_top3_2_percentage }}</td></tr>
+                        <tr><td>3</td><td>{{ sstore_top3_3_name }}</td><td>{{ sstore_top3_3_votes }}</td><td>{{ sstore_top3_3_percentage }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>#</td><td><Strong>Bottom 3</Strong></td><td><Strong>Votes</Strong></td><td><Strong>%</Strong></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>8</td><td>{{ sstore_bottom3_1_name }}</td><td>{{ sstore_bottom3_1_votes }}</td><td>{{ sstore_bottom3_1_percentage }}</td></tr>
+                        <tr><td>9</td><td>{{ sstore_bottom3_2_name }}</td><td>{{ sstore_bottom3_2_votes }}</td><td>{{ sstore_bottom3_2_percentage }}</td></tr>
+                        <tr><td>10</td><td>{{ sstore_bottom3_3_name }}</td><td>{{ sstore_bottom3_3_votes }}</td><td>{{ sstore_bottom3_3_percentage }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>#</td><td><Strong>Trending 3</Strong></td><td><Strong>Votes</Strong></td><td><Strong>%</Strong></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>{{ sstore_trending3_1_name }}</td><td>{{ sstore_trending3_1_votes }}</td><td>{{ sstore_trending3_1_percentage }}</td></tr>
+                        <tr><td>2</td><td>{{ sstore_trending3_2_name }}</td><td>{{ sstore_trending3_2_votes }}</td><td>{{ sstore_trending3_2_percentage }}</td></tr>
+                        <tr><td>3</td><td>{{ sstore_trending3_3_name }}</td><td>{{ sstore_trending3_3_votes }}</td><td>{{ sstore_trending3_3_percentage }}</td></tr>
+                    </tbody>
+                </table>
+            </div>	
+
+        </div>
+        
+        <div class="col-sm-5" id="right">
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>#</td><td><Strong>Top 3</Strong></td><td><Strong>Votes</Strong></td><td><Strong>%</Strong></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>{{ hstore_top3_1_name }}</td><td>{{ hstore_top3_1_votes }}</td><td>{{ hstore_top3_1_percentage }}</td></tr>
+                        <tr><td>2</td><td>{{ hstore_top3_2_name }}</td><td>{{ hstore_top3_2_votes }}</td><td>{{ hstore_top3_2_percentage }}</td></tr>
+                        <tr><td>3</td><td>{{ hstore_top3_3_name }}</td><td>{{ hstore_top3_3_votes }}</td><td>{{ hstore_top3_3_percentage }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>#</td><td><Strong>Bottom 3</Strong></td><td><Strong>Votes</Strong></td><td><Strong>%</Strong></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>8</td><td>{{ hstore_bottom3_1_name }}</td><td>{{ hstore_bottom3_1_votes }}</td><td>{{ hstore_bottom3_1_percentage }}</td></tr>
+                        <tr><td>9</td><td>{{ hstore_bottom3_2_name }}</td><td>{{ hstore_bottom3_2_votes }}</td><td>{{ hstore_bottom3_2_percentage }}</td></tr>
+                        <tr><td>10</td><td>{{ hstore_bottom3_3_name }}</td><td>{{ hstore_bottom3_3_votes }}</td><td>{{ hstore_bottom3_3_percentage }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>#</td><td><Strong>Trending 3</Strong></td><td><Strong>Votes</Strong></td><td><Strong>%</Strong></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>{{ hstore_trending3_1_name }}</td><td>{{ hstore_trending3_1_votes }}</td><td>{{ hstore_trending3_1_percentage }}</td></tr>
+                        <tr><td>2</td><td>{{ hstore_trending3_2_name }}</td><td>{{ hstore_trending3_2_votes }}</td><td>{{ hstore_trending3_2_percentage }}</td></tr>
+                        <tr><td>3</td><td>{{ hstore_trending3_3_name }}</td><td>{{ hstore_trending3_3_votes }}</td><td>{{ hstore_trending3_3_percentage }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <h3 class="text-center">
+        <table class="table">
+            <thead>
+                <tr><td>Candidate removal in <Strong> {{ removal_notes }}</Strong> votes</td></tr>
+            </thead>
+        </table>
+        </h3>    
+    </div>
+
+{% endblock %}

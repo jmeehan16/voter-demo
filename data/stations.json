@@ -1,0 +1,20 @@
+[
+{
+    "station_id": 0,
+    "address": null,
+    "lat": 45.522912,
+    "lon": -122.653534
+},
+{
+    "station_id": 1000,
+    "address": null,
+    "lat": 45.516988,
+    "lon": -122.645595
+},
+{
+    "station_id": 2000,
+    "address": null,
+    "lat": 45.51368,
+    "lon": -122.68409
+}
+]

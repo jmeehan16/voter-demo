@@ -1,0 +1,7 @@
+{
+    "num_bikes": 40,
+    "num_docks": 50,
+    "location": null,
+    "price": 10.00,
+    "zone_id": 1000
+}
