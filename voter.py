@@ -1,5 +1,5 @@
 import syslog
-from flask import Flask, request, render_template, send_from_directory
+from flask import Flask, request, render_template, send_from_directory, Response, jsonify
 from flask.ext.bootstrap import Bootstrap
 import json
 import re
@@ -7,6 +7,10 @@ import re
 from datetime import timedelta
 from flask import make_response, request, current_app
 from functools import update_wrapper
+
+from jinja2 import Environment
+from jinja2.loaders import FileSystemLoader
+import time
 
 app = Flask(__name__)
 
@@ -310,36 +314,93 @@ def view_all_bikes():
 def view_all_riders():
     return render_template('users.html')
 
+
+@app.route('/_start_voting')
+def start_voting():
+    return jsonify(removal_votes = 5000)
+
+@app.route('/_get_removal_votes')
+def get_removal_votes():
+    return jsonify(removal_votes = 3428)
+    
+
+@app.route('/_get_results')
+def get_results():
+    retVal = []
+    retVal.extend(getSStoreTop3())
+    retVal.extend(getHStoreTop3())
+    retVal.extend(getSStoreBottom3())
+    retVal.extend(getHStoreBottom3())
+    retVal.extend(getSStoreTrending3())
+    retVal.extend(getHStoreTrending3())
+    retVal.extend([3428])
+        
+    return jsonify(
+        sstore_top3_1_name = retVal[0], 
+        sstore_top3_1_votes = retVal[1], 
+        sstore_top3_1_percentage = retVal[2],
+        sstore_top3_2_name = retVal[3], 
+        sstore_top3_2_votes = retVal[4], 
+        sstore_top3_2_percentage = retVal[5], 
+        sstore_top3_3_name = retVal[6],
+        sstore_top3_3_votes = retVal[7], 
+        sstore_top3_3_percentage = retVal[8], 
+        hstore_top3_1_name = retVal[9], 
+        hstore_top3_1_votes = retVal[10], 
+        hstore_top3_1_percentage = retVal[11],  
+        hstore_top3_2_name = retVal[12], 
+        hstore_top3_2_votes = retVal[13], 
+        hstore_top3_2_percentage = retVal[14], 
+        hstore_top3_3_name = retVal[15], 
+        hstore_top3_3_votes = retVal[16], 
+        hstore_top3_3_percentage = retVal[17], 
+        sstore_bottom3_1_name = retVal[18], 
+        sstore_bottom3_1_votes = retVal[19], 
+        sstore_bottom3_1_percentage = retVal[20], 
+        sstore_bottom3_2_name = retVal[21], 
+        sstore_bottom3_2_votes = retVal[22], 
+        sstore_bottom3_2_percentage = retVal[23], 
+        sstore_bottom3_3_name = retVal[24], 
+        sstore_bottom3_3_votes = retVal[25], 
+        sstore_bottom3_3_percentage = retVal[26],
+        hstore_bottom3_1_name = retVal[27], 
+        hstore_bottom3_1_votes = retVal[28], 
+        hstore_bottom3_1_percentage = retVal[29], 
+        hstore_bottom3_2_name = retVal[30], 
+        hstore_bottom3_2_votes = retVal[31], 
+        hstore_bottom3_2_percentage = retVal[32],
+        hstore_bottom3_3_name = retVal[33], 
+        hstore_bottom3_3_votes = retVal[34], 
+        hstore_bottom3_3_percentage = retVal[35], 
+        sstore_trending3_1_name = retVal[36], 
+        sstore_trending3_1_votes = retVal[37], 
+        sstore_trending3_1_percentage = retVal[38], 
+        sstore_trending3_2_name = retVal[39], 
+        sstore_trending3_2_votes = retVal[40], 
+        sstore_trending3_2_percentage = retVal[41], 
+        sstore_trending3_3_name = retVal[42], 
+        sstore_trending3_3_votes = retVal[43], 
+        sstore_trending3_3_percentage = retVal[44],
+        hstore_trending3_1_name = retVal[45], 
+        hstore_trending3_1_votes = retVal[46], 
+        hstore_trending3_1_percentage = retVal[47],
+        hstore_trending3_2_name = retVal[48], 
+        hstore_trending3_2_votes = retVal[49], 
+        hstore_trending3_2_percentage = retVal[50], 
+        hstore_trending3_3_name = retVal[51], 
+        hstore_trending3_3_votes = retVal[52], 
+        hstore_trending3_3_percentage = retVal[53],
+        removal_votes = retVal[54]
+    )
+    
+        
+    
+
 # This is a GET route to display the landing page of bikeshare
 @app.route('/')
 def home():
-    sstore_top3_1_name, sstore_top3_1_votes, sstore_top3_1_percentage,  \
-    sstore_top3_2_name, sstore_top3_2_votes, sstore_top3_2_percentage,  \
-    sstore_top3_3_name, sstore_top3_3_votes, sstore_top3_3_percentage = \
-        getSStoreTop3()
-    hstore_top3_1_name, hstore_top3_1_votes, hstore_top3_1_percentage,  \
-    hstore_top3_2_name, hstore_top3_2_votes, hstore_top3_2_percentage,  \
-    hstore_top3_3_name, hstore_top3_3_votes, hstore_top3_3_percentage = \
-        getHStoreTop3()
-    sstore_bottom3_1_name, sstore_bottom3_1_votes, sstore_bottom3_1_percentage,  \
-    sstore_bottom3_2_name, sstore_bottom3_2_votes, sstore_bottom3_2_percentage,  \
-    sstore_bottom3_3_name, sstore_bottom3_3_votes, sstore_bottom3_3_percentage = \
-        getSStoreBottom3()
-    hstore_bottom3_1_name, hstore_bottom3_1_votes, hstore_bottom3_1_percentage,  \
-    hstore_bottom3_2_name, hstore_bottom3_2_votes, hstore_bottom3_2_percentage,  \
-    hstore_bottom3_3_name, hstore_bottom3_3_votes, hstore_bottom3_3_percentage = \
-        getHStoreBottom3()
-    sstore_trending3_1_name, sstore_trending3_1_votes, sstore_trending3_1_percentage,  \
-    sstore_trending3_2_name, sstore_trending3_2_votes, sstore_trending3_2_percentage,  \
-    sstore_trending3_3_name, sstore_trending3_3_votes, sstore_trending3_3_percentage = \
-        getSStoreTrending3()
-    hstore_trending3_1_name, hstore_trending3_1_votes, hstore_trending3_1_percentage,  \
-    hstore_trending3_2_name, hstore_trending3_2_votes, hstore_trending3_2_percentage,  \
-    hstore_trending3_3_name, hstore_trending3_3_votes, hstore_trending3_3_percentage = \
-        getHStoreTrending3()
-    removal_notes=3428
+    return render_template('index.html')
     
-    return render_template('index.html', **locals())
 
 # This is a GET route to display a single bike page of a given name
 @app.route('/bike/<int:bike_id>')
