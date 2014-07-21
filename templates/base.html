@@ -13,7 +13,7 @@
 </script>
 <script type=text/javascript>
   $(
-    var refreshIntervalId = setInterval(
+    setInterval(
     function() {
       $.getJSON($SCRIPT_ROOT+'/_get_results', 
       {}, 
@@ -75,10 +75,8 @@
           $("#hstore_trending3_3_percentage").text(data.hstore_trending3_3_percentage);
           $("#removal_votes").text(data.removal_votes);
       });
-    },
-    2000);
+    }, 1000)
     
-    clearInterval(refreshIntervalId);
   );
 </script>
 
