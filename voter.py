@@ -2,11 +2,12 @@ import syslog
 from flask import Flask, request, render_template, send_from_directory, Response, jsonify
 from flask.ext.bootstrap import Bootstrap
 import json
-import re
+import re, os
 
 from datetime import timedelta
 from flask import make_response, request, current_app
 from functools import update_wrapper
+import sstoreclient
 
 from jinja2 import Environment
 from jinja2.loaders import FileSystemLoader
@@ -19,6 +20,9 @@ bootstrap = Bootstrap(app)
 # Set debug mode.
 debug = False
 
+# Create S-Store client object instance
+db = sstoreclient.sstoreclient()
+
 # ================
 # REST API function definitions
 # ================
@@ -27,14 +31,41 @@ debug = False
 # Get top 3 from S-Store
 # ========
 def getSStoreTop3():
-    sstore_top3_1_name = 'Louise Burns'
-    sstore_top3_1_votes = 3963
+    proc = 'getTop3'
+    baseDir = '../h-store'
+    os.chdir(baseDir)
+    cmd = 'ant hstore-invoke -Dproject=voterdemosstorewinsp1dist -Dproc=getTop3 -Ddataonly=true > tmp'
+    os.system(cmd)
+    f = open('tmp', 'r')
+    lines = f.readlines()
+    resultLines = [line for line in lines if '[java]' in line ]
+    results = [' '.join(line.strip().split(' ')[1:]) for line in resultLines]
+    results = results[:-1]  # remove the last empty line
+    print(results)
+    f.close()
+    os.chdir('../voter-demo')
+#    try:
+#        data = db.call_proc(proc)
+#        print(data)
+#    except Exception as e:
+#        syslog.log_procerr(proc,str(e))
+#        return '{}', 500
+#	pass
+    
+#    sstore_top3_1_name = 'Louise Burns'
+#    sstore_top3_1_votes = 3963
+    sstore_top3_1_name = results[0].split(' ')[0][:-1]
+    sstore_top3_1_votes = results[0].split(' ')[1][:-1]
     sstore_top3_1_percentage = '14.9%'
-    sstore_top3_2_name = 'Stephen Fearing'
-    sstore_top3_2_votes = 3743
+#    sstore_top3_2_name = 'Stephen Fearing'
+#    sstore_top3_2_votes = 3743
+    sstore_top3_2_name = results[1].split(' ')[0][:-1]
+    sstore_top3_2_votes = results[1].split(' ')[1][:-1]
     sstore_top3_2_percentage = '14.1%'
-    sstore_top3_3_name = 'Celine Dion'
-    sstore_top3_3_votes = 3343
+#    sstore_top3_3_name = 'Celine Dion'
+#    sstore_top3_3_votes = 3343
+    sstore_top3_3_name = results[2].split(' ')[0][:-1]
+    sstore_top3_3_votes = results[2].split(' ')[1][:-1]
     sstore_top3_3_percentage = '12.6%'
     return sstore_top3_1_name, sstore_top3_1_votes, sstore_top3_1_percentage,  \
             sstore_top3_2_name, sstore_top3_2_votes, sstore_top3_2_percentage, \
@@ -440,4 +471,5 @@ if __name__ == '__main__':
         app.run(host='127.0.0.1', port=8081, debug=True)
     else:
         app.run(host='0.0.0.0', port=8081, debug=True)
+
 
