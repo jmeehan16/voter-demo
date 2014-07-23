@@ -52,21 +52,31 @@ def getSStoreTop3():
 #        return '{}', 500
 #	pass
     
-#    sstore_top3_1_name = 'Louise Burns'
-#    sstore_top3_1_votes = 3963
-    sstore_top3_1_name = results[0].split(' ')[0][:-1]
-    sstore_top3_1_votes = results[0].split(' ')[1][:-1]
-    sstore_top3_1_percentage = '14.9%'
-#    sstore_top3_2_name = 'Stephen Fearing'
-#    sstore_top3_2_votes = 3743
-    sstore_top3_2_name = results[1].split(' ')[0][:-1]
-    sstore_top3_2_votes = results[1].split(' ')[1][:-1]
-    sstore_top3_2_percentage = '14.1%'
-#    sstore_top3_3_name = 'Celine Dion'
-#    sstore_top3_3_votes = 3343
-    sstore_top3_3_name = results[2].split(' ')[0][:-1]
-    sstore_top3_3_votes = results[2].split(' ')[1][:-1]
-    sstore_top3_3_percentage = '12.6%'
+    if len(results) > 0:
+        sstore_top3_1_name = results[0].split(' ')[0][:-1]
+        sstore_top3_1_votes = results[0].split(' ')[1][:-1]
+        sstore_top3_1_percentage = '14.9%'
+    else:
+        sstore_top3_1_name = ''
+        sstore_top3_1_votes = ''
+        sstore_top3_1_percentage = ''
+    if len(results) > 1:
+        sstore_top3_2_name = results[1].split(' ')[0][:-1]
+        sstore_top3_2_votes = results[1].split(' ')[1][:-1]
+        sstore_top3_2_percentage = '14.1%'
+    else:
+        sstore_top3_2_name = ''
+        sstore_top3_2_votes = ''
+        sstore_top3_2_percentage = ''
+    if len(results) > 2:
+        sstore_top3_3_name = results[2].split(' ')[0][:-1]
+        sstore_top3_3_votes = results[2].split(' ')[1][:-1]
+        sstore_top3_3_percentage = '12.6%'
+    else:
+        sstore_top3_3_name = ''
+        sstore_top3_3_votes = ''
+        sstore_top3_3_percentage = ''
+        
     return sstore_top3_1_name, sstore_top3_1_votes, sstore_top3_1_percentage,  \
             sstore_top3_2_name, sstore_top3_2_votes, sstore_top3_2_percentage, \
             sstore_top3_3_name, sstore_top3_3_votes, sstore_top3_3_percentage
