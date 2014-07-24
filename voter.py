@@ -27,6 +27,71 @@ db = sstoreclient.sstoreclient()
 # REST API function definitions
 # ================
 
+def getResults():
+    proc = 'Results'
+    baseDir = '../h-store'
+    os.chdir(baseDir)
+    cmd = 'ant hstore-invoke -Dproject=voterdemosstorecorrect -Dproc=Results > tmp'
+    os.system(cmd)
+    f = open('tmp', 'r')
+    lines = f.readlines()
+
+    retVal = []
+    startLine = 0
+    for line in lines:
+        line = line.strip()
+        if line.startswith('[java] Results: '):
+            break
+        startLine += 1
+
+    totalVotes = lines[startLine+24].replace('[java]', ' ').strip().split(', ')[0][:-1]
+    trendingVotes = lines[startLine+29].replace('[java]', ' ').strip().split(', ')[0][:-1]
+
+    retVal.append(lines[startLine+3].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+3].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append(lines[startLine+4].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+4].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append(lines[startLine+5].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+5].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+        
+    retVal.append(lines[startLine+10].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+10].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append(lines[startLine+11].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+11].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append(lines[startLine+12].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+12].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+
+    retVal.append(lines[startLine+17].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+17].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(trendingVotes)))
+    retVal.append(lines[startLine+18].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+18].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(trendingVotes)))
+    retVal.append(lines[startLine+19].replace('[java]', ' ').strip().split(', ')[0])
+    votes = lines[startLine+19].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(votes)
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(trendingVotes)))
+
+    f.close()
+    os.chdir('../voter-demo')
+
+    return retVal
+
+
 
 # Get top 3 from S-Store
 # ========
@@ -38,6 +103,7 @@ def getSStoreTop3():
     os.system(cmd)
     f = open('tmp', 'r')
     lines = f.readlines()
+    
     resultLines = [line for line in lines if '[java]' in line ]
     results = [' '.join(line.strip().split(' ')[1:]) for line in resultLines]
     results = results[:-1]  # remove the last empty line
@@ -367,12 +433,9 @@ def get_removal_votes():
 
 @app.route('/_get_results')
 def get_results():
-    retVal = []
-    retVal.extend(getSStoreTop3())
+    retVal = getResults()
     retVal.extend(getHStoreTop3())
-    retVal.extend(getSStoreBottom3())
     retVal.extend(getHStoreBottom3())
-    retVal.extend(getSStoreTrending3())
     retVal.extend(getHStoreTrending3())
     retVal.extend([3428])
         
@@ -386,42 +449,47 @@ def get_results():
         sstore_top3_3_name = retVal[6],
         sstore_top3_3_votes = retVal[7], 
         sstore_top3_3_percentage = retVal[8], 
-        hstore_top3_1_name = retVal[9], 
-        hstore_top3_1_votes = retVal[10], 
-        hstore_top3_1_percentage = retVal[11],  
-        hstore_top3_2_name = retVal[12], 
-        hstore_top3_2_votes = retVal[13], 
-        hstore_top3_2_percentage = retVal[14], 
-        hstore_top3_3_name = retVal[15], 
-        hstore_top3_3_votes = retVal[16], 
-        hstore_top3_3_percentage = retVal[17], 
-        sstore_bottom3_1_name = retVal[18], 
-        sstore_bottom3_1_votes = retVal[19], 
-        sstore_bottom3_1_percentage = retVal[20], 
-        sstore_bottom3_2_name = retVal[21], 
-        sstore_bottom3_2_votes = retVal[22], 
-        sstore_bottom3_2_percentage = retVal[23], 
-        sstore_bottom3_3_name = retVal[24], 
-        sstore_bottom3_3_votes = retVal[25], 
-        sstore_bottom3_3_percentage = retVal[26],
-        hstore_bottom3_1_name = retVal[27], 
-        hstore_bottom3_1_votes = retVal[28], 
-        hstore_bottom3_1_percentage = retVal[29], 
-        hstore_bottom3_2_name = retVal[30], 
-        hstore_bottom3_2_votes = retVal[31], 
-        hstore_bottom3_2_percentage = retVal[32],
-        hstore_bottom3_3_name = retVal[33], 
-        hstore_bottom3_3_votes = retVal[34], 
-        hstore_bottom3_3_percentage = retVal[35], 
-        sstore_trending3_1_name = retVal[36], 
-        sstore_trending3_1_votes = retVal[37], 
-        sstore_trending3_1_percentage = retVal[38], 
-        sstore_trending3_2_name = retVal[39], 
-        sstore_trending3_2_votes = retVal[40], 
-        sstore_trending3_2_percentage = retVal[41], 
-        sstore_trending3_3_name = retVal[42], 
-        sstore_trending3_3_votes = retVal[43], 
-        sstore_trending3_3_percentage = retVal[44],
+
+        sstore_bottom3_1_name = retVal[9], 
+        sstore_bottom3_1_votes = retVal[10], 
+        sstore_bottom3_1_percentage = retVal[11], 
+        sstore_bottom3_2_name = retVal[12], 
+        sstore_bottom3_2_votes = retVal[13], 
+        sstore_bottom3_2_percentage = retVal[14], 
+        sstore_bottom3_3_name = retVal[15], 
+        sstore_bottom3_3_votes = retVal[16], 
+        sstore_bottom3_3_percentage = retVal[17],
+
+        sstore_trending3_1_name = retVal[18], 
+        sstore_trending3_1_votes = retVal[19], 
+        sstore_trending3_1_percentage = retVal[20], 
+        sstore_trending3_2_name = retVal[21], 
+        sstore_trending3_2_votes = retVal[22], 
+        sstore_trending3_2_percentage = retVal[23], 
+        sstore_trending3_3_name = retVal[24], 
+        sstore_trending3_3_votes = retVal[25], 
+        sstore_trending3_3_percentage = retVal[26],
+
+        hstore_top3_1_name = retVal[27], 
+        hstore_top3_1_votes = retVal[28], 
+        hstore_top3_1_percentage = retVal[29],  
+        hstore_top3_2_name = retVal[30], 
+        hstore_top3_2_votes = retVal[31], 
+        hstore_top3_2_percentage = retVal[32], 
+        hstore_top3_3_name = retVal[33], 
+        hstore_top3_3_votes = retVal[34], 
+        hstore_top3_3_percentage = retVal[35], 
+
+        hstore_bottom3_1_name = retVal[36], 
+        hstore_bottom3_1_votes = retVal[37], 
+        hstore_bottom3_1_percentage = retVal[38], 
+        hstore_bottom3_2_name = retVal[39], 
+        hstore_bottom3_2_votes = retVal[40], 
+        hstore_bottom3_2_percentage = retVal[41],
+        hstore_bottom3_3_name = retVal[42], 
+        hstore_bottom3_3_votes = retVal[43], 
+        hstore_bottom3_3_percentage = retVal[44], 
+
         hstore_trending3_1_name = retVal[45], 
         hstore_trending3_1_votes = retVal[46], 
         hstore_trending3_1_percentage = retVal[47],
