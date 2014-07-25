@@ -7,7 +7,6 @@ import re, os
 from datetime import timedelta
 from flask import make_response, request, current_app
 from functools import update_wrapper
-import sstoreclient
 
 from jinja2 import Environment
 from jinja2.loaders import FileSystemLoader
@@ -20,14 +19,11 @@ bootstrap = Bootstrap(app)
 # Set debug mode.
 debug = False
 
-# Create S-Store client object instance
-db = sstoreclient.sstoreclient()
-
 # ================
 # REST API function definitions
 # ================
 
-def getResults():
+def getSStoreResults():
     proc = 'Results'
     baseDir = '../h-store'
     os.chdir(baseDir)
@@ -35,7 +31,27 @@ def getResults():
     os.system(cmd)
     f = open('tmp', 'r')
     lines = f.readlines()
+    f.close()
+    os.chdir('../voter-demo')
+    return parseFile(lines)
 
+
+def getHStoreResults():
+    proc = 'Results'
+    baseDir = '../h-store'
+    os.chdir(baseDir)
+    cmd = 'ssh istc3 "cd insertinto/h-store; ant hstore-invoke -Dproject=voterdemosstorecorrect -Dproc=Results > tmp"'
+    os.system(cmd)
+    cmd = 'scp istc3:~/insertinto/h-store/tmp tmp_hstore'
+    os.system(cmd)
+    f = open('tmp_hstore', 'r')
+    lines = f.readlines()
+    f.close()
+    os.chdir('../voter-demo')
+    return parseFile(lines)
+
+
+def parseFile(lines):
     retVal = []
     startLine = 0
     for line in lines:
@@ -91,60 +107,7 @@ def getResults():
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(trendingVotes)))
 
-    f.close()
-    os.chdir('../voter-demo')
-
     return retVal
-
-
-
-# Get top 3 from H-Store
-# ========
-def getHStoreTop3():
-    hstore_top3_1_name = 'Louise Burns'
-    hstore_top3_1_votes = 3961
-    hstore_top3_1_percentage = '14.9%'
-    hstore_top3_2_name = 'Stephen Fearing'
-    hstore_top3_2_votes = 3746
-    hstore_top3_2_percentage = '14.1%'
-    hstore_top3_3_name = 'Celine Dion'
-    hstore_top3_3_votes = 3340
-    hstore_top3_3_percentage = '12.6%'
-    return hstore_top3_1_name, hstore_top3_1_votes, hstore_top3_1_percentage,  \
-            hstore_top3_2_name, hstore_top3_2_votes, hstore_top3_2_percentage, \
-            hstore_top3_3_name, hstore_top3_3_votes, hstore_top3_3_percentage
-
-# Get bottom 3 from H-Store
-# ========
-def getHStoreBottom3():
-    hstore_bottom3_1_name = 'Ruth Moody'
-    hstore_bottom3_1_votes = 1564
-    hstore_bottom3_1_percentage = '5.9%'
-    hstore_bottom3_2_name = 'Daniel Romano'
-    hstore_bottom3_2_votes = 1346
-    hstore_bottom3_2_percentage = '5.0%'
-    hstore_bottom3_3_name = 'Justin Bieber'
-    hstore_bottom3_3_votes = 1340
-    hstore_bottom3_3_percentage = '5.0%'
-    return hstore_bottom3_1_name, hstore_bottom3_1_votes, hstore_bottom3_1_percentage,  \
-            hstore_bottom3_2_name, hstore_bottom3_2_votes, hstore_bottom3_2_percentage, \
-            hstore_bottom3_3_name, hstore_bottom3_3_votes, hstore_bottom3_3_percentage
-
-# Get trending 3 from H-Store
-# ========
-def getHStoreTrending3():
-    hstore_trending3_1_name = 'Louise Burns'
-    hstore_trending3_1_votes = 703
-    hstore_trending3_1_percentage = '18.8%'
-    hstore_trending3_2_name = 'Celine Dion'
-    hstore_trending3_2_votes = 471
-    hstore_trending3_2_percentage = '12.6%'
-    hstore_trending3_3_name = 'Justin Bieber'
-    hstore_trending3_3_votes = 464
-    hstore_trending3_3_percentage = '12.4%'
-    return hstore_trending3_1_name, hstore_trending3_1_votes, hstore_trending3_1_percentage,  \
-            hstore_trending3_2_name, hstore_trending3_2_votes, hstore_trending3_2_percentage, \
-            hstore_trending3_3_name, hstore_trending3_3_votes, hstore_trending3_3_percentage
 
 
 
@@ -152,15 +115,21 @@ def getHStoreTrending3():
 def start_voting():
     # reset_results()
     baseDir = '../h-store'
-    newpid = os.fork()
-    if newpid == 0:
+    sstorepid = os.fork()
+    if sstorepid == 0: # Running S-Store benchmark on the local
         os.chdir(baseDir)
         cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50'
         os.system(cmd)
         os.chdir('../voter-demo')
+        os._exit(0)
     else:
-        return
-#    return jsonify(removal_votes = 5000)
+        hstorepid = os.fork()
+        if hstorepid == 0: # Running H-Store benchmark on the remote
+            cmd = 'ssh istc3 "cd insertinto/h-store; ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50"'
+            os.system(cmd)
+            os._exit(0)
+        else:
+            return
 
 
 
@@ -179,15 +148,13 @@ def reset_results():
 @app.route('/_get_results')
 def get_results(reset=False):
     if reset == False:
-        retVal = getResults()
-        retVal.extend(getHStoreTop3())
-        retVal.extend(getHStoreBottom3())
-        retVal.extend(getHStoreTrending3())
+        retVal = getSStoreResults()
+        retVal.extend(getHStoreResults())
         retVal.extend([3428])
     else:
         for i in range(55):
             retVal.append('')
-    print(retVal)
+#    print(retVal)
         
     return jsonify(
         sstore_top3_1_name = retVal[0], 
