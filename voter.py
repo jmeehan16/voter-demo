@@ -115,21 +115,28 @@ def parseFile(lines):
 def start_voting():
     # reset_results()
     baseDir = '../h-store'
-    sstorepid = os.fork()
-    if sstorepid == 0: # Running S-Store benchmark on the local
-        os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50'
+    controllerpid = os.fork()
+    if controllerpid == 0: # Running the controller
+        os.chdir(baseDir+'/tools')
+        cmd = 'python voterdemoserver.py'
         os.system(cmd)
-        os.chdir('../voter-demo')
         os._exit(0)
     else:
-        hstorepid = os.fork()
-        if hstorepid == 0: # Running H-Store benchmark on the remote
-            cmd = 'ssh istc3 "cd insertinto/h-store; ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50"'
+        sstorepid = os.fork()
+        if sstorepid == 0:  # Running S-Store benchmark on the local
+            os.chdir(baseDir)
+            cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50'
             os.system(cmd)
+            os.chdir('../voter-demo')
             os._exit(0)
         else:
-            return
+            hstorepid = os.fork()
+            if hstorepid == 0: # Running H-Store benchmark on the remote
+                cmd = 'ssh istc3 "cd insertinto/h-store; ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50"'
+                os.system(cmd)
+                os._exit(0)
+            else:
+                return
 
 
 
