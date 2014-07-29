@@ -24,7 +24,7 @@ debug = False
 # ================
 
 def getSStoreResults():
-    fname = '../h-store/logs/demosstorecurent.txt'
+    fname = '../h-store/logs/demosstorecurrent.txt'
     f = open(fname, 'r')
     lines = f.readlines()
     f.close()
@@ -32,7 +32,9 @@ def getSStoreResults():
 
 
 def getHStoreResults():
-    fname = '../h-store/logs/demohstorecurent.txt'
+    cmd = 'scp istc3:insertinto/h-store/logs/demohstorecurrent.txt ../h-store/logs/demohstorecurrent.txt'
+    os.system(cmd)
+    fname = '../h-store/logs/demohstorecurrent.txt'
     f = open(fname, 'r')
     lines = f.readlines()
     f.close()
