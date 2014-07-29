@@ -24,89 +24,66 @@ debug = False
 # ================
 
 def getSStoreResults():
-    proc = 'Results'
-    baseDir = '../h-store'
-    os.chdir(baseDir)
-    cmd = 'ant hstore-invoke -Dproject=voterdemosstorecorrect -Dproc=Results > tmp'
-    os.system(cmd)
-    f = open('tmp', 'r')
+    fname = '../h-store/logs/demosstorecurent.txt'
+    f = open(fname, 'r')
     lines = f.readlines()
     f.close()
-    os.chdir('../voter-demo')
     return parseFile(lines)
 
 
 def getHStoreResults():
-    proc = 'Results'
-    baseDir = '../h-store'
-    os.chdir(baseDir)
-    cmd = 'ssh istc3 "cd insertinto/h-store; ant hstore-invoke -Dproject=voterdemosstorecorrect -Dproc=Results > tmp"'
-    os.system(cmd)
-    cmd = 'scp istc3:~/insertinto/h-store/tmp tmp_hstore'
-    os.system(cmd)
-    f = open('tmp_hstore', 'r')
+    fname = '../h-store/logs/demohstorecurent.txt'
+    f = open(fname, 'r')
     lines = f.readlines()
     f.close()
-    os.chdir('../voter-demo')
     return parseFile(lines)
 
 
 def parseFile(lines):
     retVal = []
-    startLine = 0
-    for line in lines:
-        line = line.strip()
-        if line.startswith('[java] Results: '):
-            break
-        startLine += 1
 
-#    if len(lines) < 24:  # no results yet
-#        for i in range(27):
-#            retVal.append(' ')
-#        return retVal
+    totalVotes = lines[17].strip()
+    trendingVotes = lines[20].strip()
 
-    totalVotes = lines[startLine+24].replace('[java]', ' ').strip().split(', ')[0][:-1]
-    trendingVotes = lines[startLine+29].replace('[java]', ' ').strip().split(', ')[0][:-1]
-
-    retVal.append(lines[startLine+3].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+3].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(lines[2].strip().split(',')[0])
+    votes = lines[2].strip().split(',')[1]
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
-    retVal.append(lines[startLine+4].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+4].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(lines[3].strip().split(',')[0])
+    votes = lines[3].strip().split(',')[1]
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
-    retVal.append(lines[startLine+5].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+5].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(lines[4].strip().split(',')[0])
+    votes = lines[4].strip().split(',')[1]
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
         
-    retVal.append(lines[startLine+10].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+10].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(lines[7].strip().split(',')[0])
+    votes = lines[7].strip().split(',')[1]
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
-    retVal.append(lines[startLine+11].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+11].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(lines[8].strip().split(',')[0])
+    votes = lines[8].strip().split(',')[1]
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
-    retVal.append(lines[startLine+12].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+12].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append(lines[9].strip().split(',')[0])
+    votes = lines[9].strip().split(',')[1]
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
-
-    retVal.append(lines[startLine+17].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+17].replace('[java]', ' ').strip().split(', ')[1][:-1]
+        
+    retVal.append(lines[12].strip().split(',')[0])
+    votes = lines[12].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(trendingVotes)))
-    retVal.append(lines[startLine+18].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+18].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append(lines[13].strip().split(',')[0])
+    votes = lines[13].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(trendingVotes)))
-    retVal.append(lines[startLine+19].replace('[java]', ' ').strip().split(', ')[0])
-    votes = lines[startLine+19].replace('[java]', ' ').strip().split(', ')[1][:-1]
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append(lines[14].strip().split(',')[0])
+    votes = lines[14].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(trendingVotes)))
-
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+        
     return retVal
 
 
