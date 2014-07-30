@@ -25,10 +25,13 @@ debug = False
 
 sstorefilename = '../h-store/logs/demosstorecurrent.txt'
 hstorefilename = '../h-store/logs/demohstorecurrent.txt'
-os.system('rm ' + sstorefilename)
-os.system('rm ' + hstorefilename)
-os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
-os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
+try:
+    os.system('rm ' + sstorefilename)
+    os.system('rm ' + hstorefilename)
+    os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
+    os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
+except (OSError, IOError) as e:
+    pass
 
 top3_1_same_flag = True
 top3_2_same_flag = True
@@ -122,7 +125,10 @@ def start_voting():
     for logfile in (sstorefilename, hstorefilename, \
 		'../h-store/logs/demosstoreout.txt', '../h-store/logs/demohstoreout.txt'):
     	cmd = 'rm ' + logfile
-    	os.system(cmd)
+        try:
+    	    os.system(cmd)
+        except (OSError, IOError) as e:
+            pass
     reset_results()
     baseDir = '../h-store'
 #    controllerpid = os.fork()
@@ -158,10 +164,13 @@ def get_removal_votes():
 
 @app.route('/_reset_results')
 def reset_results():
-    os.system('rm ' + sstorefilename)
-    os.system('rm ' + hstorefilename)
-    os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
-    os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
+    try:
+        os.system('rm ' + sstorefilename)
+        os.system('rm ' + hstorefilename)
+        os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
+        os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
+    except (OSError, IOError) as e:
+        pass
     get_results(reset=True)
 
 

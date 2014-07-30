@@ -64,7 +64,6 @@
                     </tbody>
                 </table>
             </div>	
-
         </div>
         
         <div class="col-sm-5" id="right">
@@ -110,13 +109,33 @@
     </div>
 
     <div class="row">
-        <h3 class="text-center">
-        <table class="table">
-            <thead>
-                <tr>Candidate removal in <Strong><td id="removal_votes"/></Strong> votes</tr>
-            </thead>
-        </table>
-        </h3>    
+        <div class="col-sm-5" id="left">
+            <h4 class="text-right">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td width="60%" align="left"></td>
+                        <td width="20%" align="right">Candidate removal in</td>
+                        <td width="10%" align="center" valign="bottom" id="removal_votes"><Strong><font size="6">57</font></Strong></td>
+                        <td width="5%" align="left"><br/>votes</td>
+                    </tr>
+                </thead>
+            </table>
+            </h4>    
+        </div>
+
+        <div class="col-sm-5" id="right">
+            <h4 class="text-left">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td width="20%" align="right">Candidates remaining:</td>
+                        <td width="80%" align="left" valign="bottom" id="candidates_remaining"><Strong><font size="6">10</font></Strong></td>
+                    </tr>
+                </thead>
+            </table>
+            </h4>    
+        </div>
     </div>
 
 {% endblock %}
