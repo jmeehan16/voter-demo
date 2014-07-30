@@ -41,19 +41,31 @@ trending3_2_same_flag = True
 trending3_3_same_flag = True
 
 def getSStoreResults():
-    f = open(sstorefilename, 'r')
-    lines = f.readlines()
-    f.close()
-    return parseFile(lines)
+    try:
+        f = open(sstorefilename, 'r')
+        lines = f.readlines()
+        f.close()
+        return parseFile(lines)
+    except (OSError, IOError) as e:
+        retVal = []
+        for i in range(27):
+            retVal.append('')
+        return retVal
 
 
 def getHStoreResults():
-    cmd = 'scp istc3:insertinto/h-store/logs/demohstorecurrent.txt ' + hstorefilename
-    os.system(cmd)
-    f = open(hstorefilename, 'r')
-    lines = f.readlines()
-    f.close()
-    return parseFile(lines)
+    try:
+        cmd = 'scp istc3:insertinto/h-store/logs/demohstorecurrent.txt ' + hstorefilename
+        os.system(cmd)
+        f = open(hstorefilename, 'r')
+        lines = f.readlines()
+        f.close()
+        return parseFile(lines)
+    except (OSError, IOError) as e:
+        retVal = []
+        for i in range(27):
+            retVal.append('')
+        return retVal
 
 
 def parseFile(lines):
