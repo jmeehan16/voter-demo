@@ -30,15 +30,15 @@ os.system('rm ' + hstorefilename)
 os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
 os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
 
-top3_1_same = True
-top3_2_same = True
-top3_3_same = True
-bottom3_1_same = True
-bottom3_2_same = True
-bottom3_3_same = True
-trending3_1_same = True
-trending3_2_same = True
-trending3_3_same = True
+top3_1_same_flag = True
+top3_2_same_flag = True
+top3_3_same_flag = True
+bottom3_1_same_flag = True
+bottom3_2_same_flag = True
+bottom3_3_same_flag = True
+trending3_1_same_flag = True
+trending3_2_same_flag = True
+trending3_3_same_flag = True
 
 def getSStoreResults():
     f = open(sstorefilename, 'r')
@@ -286,7 +286,7 @@ def get_results(reset=False):
 # This is a GET route to display the landing page of bikeshare
 @app.route('/')
 def home():
-    return render_template('index.html', **locals())
+    return render_template('index.html')
     
 
 

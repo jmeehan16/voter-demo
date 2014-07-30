@@ -18,61 +18,226 @@
       $.getJSON($SCRIPT_ROOT+'/_get_results', 
       {}, 
       function(data) {
+          var tdBgColorGrey = "#FAFAFA";
+          var tdBgColorWhite = "#FFFFFF";
+          var tdBgColorDiff = "#F5A9A9";
           $("#sstore_top3_1_name").text(data.sstore_top3_1_name);
           $("#sstore_top3_1_votes").text(data.sstore_top3_1_votes);
           $("#sstore_top3_1_percentage").text(data.sstore_top3_1_percentage);
+          if (!data.top3_1_same) {
+              document.getElementById('sstore_top3_1_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_top3_1_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_top3_1_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_top3_1_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_top3_1_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_top3_1_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#sstore_top3_2_name").text(data.sstore_top3_2_name);
           $("#sstore_top3_2_votes").text(data.sstore_top3_2_votes);
           $("#sstore_top3_2_percentage").text(data.sstore_top3_2_percentage);
+          if (!data.top3_2_same) {
+              document.getElementById('sstore_top3_2_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_top3_2_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_top3_2_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_top3_2_name').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('sstore_top3_2_votes').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('sstore_top3_2_percentage').style.backgroundColor = tdBgColorWhite;
+          }
           $("#sstore_top3_3_name").text(data.sstore_top3_3_name);
           $("#sstore_top3_3_votes").text(data.sstore_top3_3_votes);
           $("#sstore_top3_3_percentage").text(data.sstore_top3_3_percentage);
+          if (!data.top3_3_same) {
+              document.getElementById('sstore_top3_3_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_top3_3_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_top3_3_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_top3_3_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_top3_3_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_top3_3_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#sstore_bottom3_1_name").text(data.sstore_bottom3_1_name);
           $("#sstore_bottom3_1_votes").text(data.sstore_bottom3_1_votes);
           $("#sstore_bottom3_1_percentage").text(data.sstore_bottom3_1_percentage);
+          if (!data.bottom3_1_same) {
+              document.getElementById('sstore_bottom3_1_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_bottom3_1_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_bottom3_1_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_bottom3_1_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_bottom3_1_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_bottom3_1_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#sstore_bottom3_2_name").text(data.sstore_bottom3_2_name);
           $("#sstore_bottom3_2_votes").text(data.sstore_bottom3_2_votes);
           $("#sstore_bottom3_2_percentage").text(data.sstore_bottom3_2_percentage);
+          if (!data.bottom3_2_same) {
+              document.getElementById('sstore_bottom3_2_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_bottom3_2_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_bottom3_2_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_bottom3_2_name').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('sstore_bottom3_2_votes').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('sstore_bottom3_2_percentage').style.backgroundColor = tdBgColorWhite;
+          }
           $("#sstore_bottom3_3_name").text(data.sstore_bottom3_3_name);
           $("#sstore_bottom3_3_votes").text(data.sstore_bottom3_3_votes);
           $("#sstore_bottom3_3_percentage").text(data.sstore_bottom3_3_percentage);
+          if (!data.bottom3_3_same) {
+              document.getElementById('sstore_bottom3_3_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_bottom3_3_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_bottom3_3_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_bottom3_3_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_bottom3_3_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_bottom3_3_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#sstore_trending3_1_name").text(data.sstore_trending3_1_name);
           $("#sstore_trending3_1_votes").text(data.sstore_trending3_1_votes);
           $("#sstore_trending3_1_percentage").text(data.sstore_trending3_1_percentage);
+          if (!data.trending3_1_same) {
+              document.getElementById('sstore_trending3_1_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_trending3_1_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_trending3_1_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_trending3_1_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_trending3_1_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_trending3_1_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#sstore_trending3_2_name").text(data.sstore_trending3_2_name);
           $("#sstore_trending3_2_votes").text(data.sstore_trending3_2_votes);
           $("#sstore_trending3_2_percentage").text(data.sstore_trending3_2_percentage);
+          if (!data.trending3_2_same) {
+              document.getElementById('sstore_trending3_2_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_trending3_2_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_trending3_2_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_trending3_2_name').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('sstore_trending3_2_votes').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('sstore_trending3_2_percentage').style.backgroundColor = tdBgColorWhite;
+          }
           $("#sstore_trending3_3_name").text(data.sstore_trending3_3_name);
           $("#sstore_trending3_3_votes").text(data.sstore_trending3_3_votes);
           $("#sstore_trending3_3_percentage").text(data.sstore_trending3_3_percentage);
+          if (!data.trending3_3_same) {
+              document.getElementById('sstore_trending3_3_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_trending3_3_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('sstore_trending3_3_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('sstore_trending3_3_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_trending3_3_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('sstore_trending3_3_percentage').style.backgroundColor = tdBgColorGrey;
+          }
 
           $("#hstore_top3_1_name").text(data.hstore_top3_1_name);
           $("#hstore_top3_1_votes").text(data.hstore_top3_1_votes);
           $("#hstore_top3_1_percentage").text(data.hstore_top3_1_percentage);
+          if (!data.top3_1_same) {
+              document.getElementById('hstore_top3_1_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_top3_1_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_top3_1_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_top3_1_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_top3_1_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_top3_1_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#hstore_top3_2_name").text(data.hstore_top3_2_name);
           $("#hstore_top3_2_votes").text(data.hstore_top3_2_votes);
           $("#hstore_top3_2_percentage").text(data.hstore_top3_2_percentage);
+          if (!data.top3_2_same) {
+              document.getElementById('hstore_top3_2_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_top3_2_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_top3_2_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_top3_2_name').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('hstore_top3_2_votes').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('hstore_top3_2_percentage').style.backgroundColor = tdBgColorWhite;
+          }
           $("#hstore_top3_3_name").text(data.hstore_top3_3_name);
           $("#hstore_top3_3_votes").text(data.hstore_top3_3_votes);
           $("#hstore_top3_3_percentage").text(data.hstore_top3_3_percentage);
+          if (!data.top3_3_same) {
+              document.getElementById('hstore_top3_3_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_top3_3_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_top3_3_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_top3_3_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_top3_3_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_top3_3_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#hstore_bottom3_1_name").text(data.hstore_bottom3_1_name);
           $("#hstore_bottom3_1_votes").text(data.hstore_bottom3_1_votes);
           $("#hstore_bottom3_1_percentage").text(data.hstore_bottom3_1_percentage);
+          if (!data.bottom3_1_same) {
+              document.getElementById('hstore_bottom3_1_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_bottom3_1_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_bottom3_1_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_bottom3_1_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_bottom3_1_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_bottom3_1_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#hstore_bottom3_2_name").text(data.hstore_bottom3_2_name);
           $("#hstore_bottom3_2_votes").text(data.hstore_bottom3_2_votes);
           $("#hstore_bottom3_2_percentage").text(data.hstore_bottom3_2_percentage);
+          if (!data.bottom3_2_same) {
+              document.getElementById('hstore_bottom3_2_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_bottom3_2_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_bottom3_2_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_bottom3_2_name').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('hstore_bottom3_2_votes').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('hstore_bottom3_2_percentage').style.backgroundColor = tdBgColorWhite;
+          }
           $("#hstore_bottom3_3_name").text(data.hstore_bottom3_3_name);
           $("#hstore_bottom3_3_votes").text(data.hstore_bottom3_3_votes);
           $("#hstore_bottom3_3_percentage").text(data.hstore_bottom3_3_percentage);
+          if (!data.bottom3_3_same) {
+              document.getElementById('hstore_bottom3_3_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_bottom3_3_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_bottom3_3_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_bottom3_3_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_bottom3_3_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_bottom3_3_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#hstore_trending3_1_name").text(data.hstore_trending3_1_name);
           $("#hstore_trending3_1_votes").text(data.hstore_trending3_1_votes);
           $("#hstore_trending3_1_percentage").text(data.hstore_trending3_1_percentage);
+          if (!data.trending3_1_same) {
+              document.getElementById('hstore_trending3_1_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_trending3_1_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_trending3_1_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_trending3_1_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_trending3_1_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_trending3_1_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#hstore_trending3_2_name").text(data.hstore_trending3_2_name);
           $("#hstore_trending3_2_votes").text(data.hstore_trending3_2_votes);
           $("#hstore_trending3_2_percentage").text(data.hstore_trending3_2_percentage);
+          if (!data.trending3_2_same) {
+              document.getElementById('hstore_trending3_2_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_trending3_2_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_trending3_2_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_trending3_2_name').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('hstore_trending3_2_votes').style.backgroundColor = tdBgColorWhite;
+              document.getElementById('hstore_trending3_2_percentage').style.backgroundColor = tdBgColorWhite;
+          }
           $("#hstore_trending3_3_name").text(data.hstore_trending3_3_name);
           $("#hstore_trending3_3_votes").text(data.hstore_trending3_3_votes);
           $("#hstore_trending3_3_percentage").text(data.hstore_trending3_3_percentage);
+          if (!data.trending3_3_same) {
+              document.getElementById('hstore_trending3_3_name').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_trending3_3_votes').style.backgroundColor = tdBgColorDiff;
+              document.getElementById('hstore_trending3_3_percentage').style.backgroundColor = tdBgColorDiff;
+          } else {
+              document.getElementById('hstore_trending3_3_name').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_trending3_3_votes').style.backgroundColor = tdBgColorGrey;
+              document.getElementById('hstore_trending3_3_percentage').style.backgroundColor = tdBgColorGrey;
+          }
           $("#removal_votes").text(data.removal_votes);
       });
     }, 500)
