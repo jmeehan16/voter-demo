@@ -23,19 +23,34 @@ debug = False
 # REST API function definitions
 # ================
 
+sstorefilename = '../h-store/logs/demosstorecurrent.txt'
+hstorefilename = '../h-store/logs/demohstorecurrent.txt'
+os.system('rm ' + sstorefilename)
+os.system('rm ' + hstorefilename)
+os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
+os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
+
+top3_1_same = True
+top3_2_same = True
+top3_3_same = True
+bottom3_1_same = True
+bottom3_2_same = True
+bottom3_3_same = True
+trending3_1_same = True
+trending3_2_same = True
+trending3_3_same = True
+
 def getSStoreResults():
-    fname = '../h-store/logs/demosstorecurrent.txt'
-    f = open(fname, 'r')
+    f = open(sstorefilename, 'r')
     lines = f.readlines()
     f.close()
     return parseFile(lines)
 
 
 def getHStoreResults():
-    cmd = 'scp istc3:insertinto/h-store/logs/demohstorecurrent.txt ../h-store/logs/demohstorecurrent.txt'
+    cmd = 'scp istc3:insertinto/h-store/logs/demohstorecurrent.txt ' + hstorefilename
     os.system(cmd)
-    fname = '../h-store/logs/demohstorecurrent.txt'
-    f = open(fname, 'r')
+    f = open(hstorefilename, 'r')
     lines = f.readlines()
     f.close()
     return parseFile(lines)
@@ -92,6 +107,10 @@ def parseFile(lines):
 
 @app.route('/_start_voting')
 def start_voting():
+    for logfile in (sstorefilename, hstorefilename, \
+		'../h-store/logs/demosstoreout.txt', '../h-store/logs/demohstoreout.txt'):
+    	cmd = 'rm ' + logfile
+    	os.system(cmd)
     # reset_results()
     baseDir = '../h-store'
 #    controllerpid = os.fork()
@@ -133,15 +152,61 @@ def reset_results():
 
 @app.route('/_get_results')
 def get_results(reset=False):
+    retVal = ['']
     if reset == False:
         retVal = getSStoreResults()
         retVal.extend(getHStoreResults())
-        retVal.extend([3428])
+#        retVal.extend([3428])
     else:
         for i in range(55):
             retVal.append('')
 #    print(retVal)
-        
+
+    if retVal[0] == '' or retVal[0] == retVal[27]:
+        top3_1_same_flag = True
+    else:
+        top3_1_same_flag = False
+
+    if retVal[0] == '' or retVal[3] == retVal[30]:
+        top3_2_same_flag = True
+    else:
+        top3_2_same_flag = False
+
+    if  retVal[0] == '' or retVal[6] == retVal[33]:
+        top3_3_same_flag = True
+    else:
+        top3_3_same_flag = False
+
+    if retVal[0] == '' or retVal[9] == retVal[36]:
+        bottom3_1_same_flag = True
+    else:
+        bottom3_1_same_flag = False
+
+    if retVal[0] == '' or retVal[12] == retVal[39]:
+        bottom3_2_same_flag = True
+    else:
+        bottom3_2_same_flag = False
+
+    if retVal[0] == '' or retVal[15] == retVal[42]:
+        bottom3_3_same_flag = True
+    else:
+        bottom3_3_same_flag = False
+
+    if retVal[0] == '' or retVal[18] == retVal[45]:
+        trending3_1_same_flag = True
+    else:
+        trending3_1_same_flag = False
+
+    if retVal[0] == '' or retVal[21] == retVal[48]:
+        trending3_2_same_flag = True
+    else:
+        trending3_2_same_flag = False
+
+    if retVal[0] == '' or retVal[24] == retVal[51]:
+        trending3_3_same_flag = True
+    else:
+        trending3_3_same_flag = False
+
     return jsonify(
         sstore_top3_1_name = retVal[0], 
         sstore_top3_1_votes = retVal[1], 
@@ -202,7 +267,17 @@ def get_results(reset=False):
         hstore_trending3_3_name = retVal[51], 
         hstore_trending3_3_votes = retVal[52], 
         hstore_trending3_3_percentage = retVal[53],
-        removal_votes = retVal[54]
+#        removal_votes = retVal[54],
+
+        top3_1_same = top3_1_same_flag,
+        top3_2_same = top3_2_same_flag,
+        top3_3_same = top3_3_same_flag,
+        bottom3_1_same = bottom3_1_same_flag,
+        bottom3_2_same = bottom3_2_same_flag,
+        bottom3_3_same = bottom3_3_same_flag,
+        trending3_1_same = trending3_1_same_flag,
+        trending3_2_same = trending3_2_same_flag,
+        trending3_3_same = trending3_3_same_flag
     )
     
         
@@ -211,7 +286,7 @@ def get_results(reset=False):
 # This is a GET route to display the landing page of bikeshare
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', **locals())
     
 
 
