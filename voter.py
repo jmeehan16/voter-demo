@@ -111,7 +111,7 @@ def start_voting():
 		'../h-store/logs/demosstoreout.txt', '../h-store/logs/demohstoreout.txt'):
     	cmd = 'rm ' + logfile
     	os.system(cmd)
-    # reset_results()
+    reset_results()
     baseDir = '../h-store'
 #    controllerpid = os.fork()
 #    if controllerpid == 0: # Running the controller
@@ -146,6 +146,10 @@ def get_removal_votes():
 
 @app.route('/_reset_results')
 def reset_results():
+    os.system('rm ' + sstorefilename)
+    os.system('rm ' + hstorefilename)
+    os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
+    os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
     get_results(reset=True)
 
 
