@@ -1,8 +1,9 @@
+#!/usr/bin/python
 import syslog
 from flask import Flask, request, render_template, send_from_directory, Response, jsonify
 from flask.ext.bootstrap import Bootstrap
 import json
-import re, os
+import re, os, sys
 
 from datetime import timedelta
 from flask import make_response, request, current_app
@@ -23,13 +24,17 @@ debug = False
 # REST API function definitions
 # ================
 
-sstorefilename = '../h-store/logs/demosstorecurrent.txt'
-hstorefilename = '../h-store/logs/demohstorecurrent.txt'
+remoteserver = 'istc3'
+hstorelogfile = '/home/jdu/insertinto/h-store/logs/demohstorecurrent.txt'
+sstorelogfile = '/home/jdu/insertinto/h-store/logs/demosstorecurrent.txt'
+
 try:
-    os.system('rm ' + sstorefilename)
-    os.system('rm ' + hstorefilename)
-    os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
-    os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
+    remoteremove = 'rm ' + hstorelogfile
+    os.system('rm ' + hstorelogfile)
+    os.system('ssh ' + remoteserver + ' "' + remoteremove + '"')
+    remoteremove = 'rm ' + sstorelogfile
+    os.system('rm ' + sstorelogfile)
+    os.system('ssh ' + remoteserver + ' "' + remoteremove + '"')
 except (OSError, IOError) as e:
     pass
 
@@ -45,7 +50,7 @@ trending3_3_same_flag = True
 
 def getSStoreResults():
     try:
-        f = open(sstorefilename, 'r')
+        f = open(sstorelogfile, 'r')
         lines = f.readlines()
         f.close()
         return parseFile(lines)
@@ -58,9 +63,10 @@ def getSStoreResults():
 
 def getHStoreResults():
     try:
-        cmd = 'scp istc3:insertinto/h-store/logs/demohstorecurrent.txt ' + hstorefilename
+        cmd = 'scp ' + remoteserver + ':' +hstorelogfile + ' ' + hstorelogfile
+	print(cmd)
         os.system(cmd)
-        f = open(hstorefilename, 'r')
+        f = open(hstorelogfile, 'r')
         lines = f.readlines()
         f.close()
         return parseFile(lines)
@@ -122,15 +128,14 @@ def parseFile(lines):
 
 @app.route('/_start_voting')
 def start_voting():
-    for logfile in (sstorefilename, hstorefilename, \
-		'../h-store/logs/demosstoreout.txt', '../h-store/logs/demohstoreout.txt'):
-    	cmd = 'rm ' + logfile
-        try:
-    	    os.system(cmd)
-        except (OSError, IOError) as e:
-            pass
+#    for logfile in (sstorelogfile, hstorelogfile):
+#    	cmd = 'rm ' + logfile
+#        try:
+#    	    os.system(cmd)
+#        except (OSError, IOError) as e:
+#            pass
     reset_results()
-    baseDir = '../h-store'
+    baseDir = '/'.join(sstorelogfile.split('/')[:-2])
 #    controllerpid = os.fork()
 #    if controllerpid == 0: # Running the controller
 #        os.chdir(baseDir+'/tools')
@@ -141,14 +146,17 @@ def start_voting():
     sstorepid = os.fork()
     if sstorepid == 0:  # Running S-Store benchmark on the local
         os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50'
+        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=10 -Dclient.txnrate=10 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=1000000'
         os.system(cmd)
-        os.chdir('../voter-demo')
+#        os.chdir('../voter-demo')
         os._exit(0)
     else:
         hstorepid = os.fork()
         if hstorepid == 0: # Running H-Store benchmark on the remote
-            cmd = 'ssh istc3 "cd insertinto/h-store; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=50"'
+            baseDir = '/'.join(hstorelogfile.split('/')[:-2])
+            cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=10 -Dclient.txnrate=10 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=1000000"'
+            cmd = 'ssh ' + remoteserver + ' ' + cmd
+            print(cmd)
             os.system(cmd)
             os._exit(0)
         else:
@@ -165,10 +173,12 @@ def get_removal_votes():
 @app.route('/_reset_results')
 def reset_results():
     try:
-        os.system('rm ' + sstorefilename)
-        os.system('rm ' + hstorefilename)
-        os.system('ssh istc3 "rm insertinto/h-store/logs/demosstorecurrent.txt"')
-        os.system('ssh istc3 "rm insertinto/h-store/logs/demohstorecurrent.txt"')
+        cmd = 'rm ' + sstorelogfile
+        os.system(cmd)
+        os.system('ssh ' + remoteserver + ' "' + cmd + '"')
+        cmd = 'rm ' + hstorelogfile
+        os.system(cmd)
+        os.system('ssh ' + remoteserver + ' "' + cmd + '"')
     except (OSError, IOError) as e:
         pass
     get_results(reset=True)
@@ -316,9 +326,19 @@ def home():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) < 4:
+        print('python ' + sys.argv[0] + ' <remote server> <S-Store log file> <H-Store log file>')
+        sys.exit(2)
+
+    global remoteserver
+    remoteserver = sys.argv[1]
+    global sstorelogfile
+    sstorelogfile = sys.argv[2]
+    global hstorelogfile
+    hstorelogfile = sys.argv[3]
+
     if debug:
         app.run(host='127.0.0.1', port=8081, debug=True)
     else:
         app.run(host='0.0.0.0', port=8081, debug=True)
-
 
