@@ -191,14 +191,19 @@ def reset_results():
 
 @app.route('/_get_results')
 def get_results(reset=False):
+    global contestants_number
     retVal = ['']
     if reset == False:
         retVal = getSStoreResults()
         retVal.extend(getHStoreResults())
 #        retVal.extend([3428])
+        if len(retVal) < 56:
+            retVal = []
+            for i in range(56):
+                retVal.append('')
         if retVal[27] == '':
             retVal[27] = contestants_number
-        if len(retVal) > 55 and retVal[55] == '':
+        if retVal[55] == '':
             retVal[55] = contestants_number
     else:
         for i in range(56):
@@ -224,9 +229,9 @@ def get_results(reset=False):
         top3_3_same_flag = False
 
     if retVal[0] == '' or retVal[9] == retVal[37]:
-        bottom3_1_same_flag = True
+        bottom3_3_same_flag = True
     else:
-        bottom3_1_same_flag = False
+        bottom3_3_same_flag = False
 
     if retVal[0] == '' or retVal[12] == retVal[40]:
         bottom3_2_same_flag = True
@@ -234,9 +239,9 @@ def get_results(reset=False):
         bottom3_2_same_flag = False
 
     if retVal[0] == '' or retVal[15] == retVal[43]:
-        bottom3_3_same_flag = True
+        bottom3_1_same_flag = True
     else:
-        bottom3_3_same_flag = False
+        bottom3_1_same_flag = False
 
     if retVal[0] == '' or retVal[18] == retVal[46]:
         trending3_1_same_flag = True
@@ -264,18 +269,18 @@ def get_results(reset=False):
         sstore_top3_3_votes = retVal[7], 
         sstore_top3_3_percentage = retVal[8], 
 
-        sstore_bottom3_1_number = str(int(retVal[27])),
-        sstore_bottom3_1_name = retVal[9], 
-        sstore_bottom3_1_votes = retVal[10], 
-        sstore_bottom3_1_percentage = retVal[11], 
+        sstore_bottom3_3_number = str(int(retVal[27])),
+        sstore_bottom3_3_name = retVal[9], 
+        sstore_bottom3_3_votes = retVal[10], 
+        sstore_bottom3_3_percentage = retVal[11], 
         sstore_bottom3_2_number = str(int(retVal[27])-1),
         sstore_bottom3_2_name = retVal[12], 
         sstore_bottom3_2_votes = retVal[13], 
         sstore_bottom3_2_percentage = retVal[14], 
-        sstore_bottom3_3_number = str(int(retVal[27])-1),
-        sstore_bottom3_3_name = retVal[15], 
-        sstore_bottom3_3_votes = retVal[16], 
-        sstore_bottom3_3_percentage = retVal[17],
+        sstore_bottom3_1_number = str(int(retVal[27])-2),
+        sstore_bottom3_1_name = retVal[15], 
+        sstore_bottom3_1_votes = retVal[16], 
+        sstore_bottom3_1_percentage = retVal[17],
 
         sstore_trending3_1_name = retVal[18], 
         sstore_trending3_1_votes = retVal[19], 
@@ -298,18 +303,18 @@ def get_results(reset=False):
         hstore_top3_3_votes = retVal[35], 
         hstore_top3_3_percentage = retVal[36], 
 
-        hstore_bottom3_1_number = str(int(retVal[55])),
-        hstore_bottom3_1_name = retVal[37], 
-        hstore_bottom3_1_votes = retVal[38], 
-        hstore_bottom3_1_percentage = retVal[39], 
+        hstore_bottom3_3_number = str(int(retVal[55])),
+        hstore_bottom3_3_name = retVal[37], 
+        hstore_bottom3_3_votes = retVal[38], 
+        hstore_bottom3_3_percentage = retVal[39], 
         hstore_bottom3_2_number = str(int(retVal[55])-1),
         hstore_bottom3_2_name = retVal[40], 
         hstore_bottom3_2_votes = retVal[41], 
         hstore_bottom3_2_percentage = retVal[42],
-        hstore_bottom3_3_number = str(int(retVal[55])-2),
-        hstore_bottom3_3_name = retVal[43], 
-        hstore_bottom3_3_votes = retVal[44], 
-        hstore_bottom3_3_percentage = retVal[45], 
+        hstore_bottom3_1_number = str(int(retVal[55])-2),
+        hstore_bottom3_1_name = retVal[43], 
+        hstore_bottom3_1_votes = retVal[44], 
+        hstore_bottom3_1_percentage = retVal[45], 
 
         hstore_trending3_1_name = retVal[46], 
         hstore_trending3_1_votes = retVal[47], 
