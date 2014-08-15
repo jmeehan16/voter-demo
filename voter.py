@@ -24,9 +24,11 @@ debug = False
 # REST API function definitions
 # ================
 
+# default values
 remoteserver = 'istc3'
 hstorelogfile = '/home/jdu/insertinto/h-store/logs/demohstorecurrent.txt'
 sstorelogfile = '/home/jdu/insertinto/h-store/logs/demosstorecurrent.txt'
+contestants_number = 25
 
 try:
     remoteremove = 'rm ' + hstorelogfile
@@ -82,6 +84,7 @@ def parseFile(lines):
 
     totalVotes = lines[17].strip()
     trendingVotes = lines[20].strip()
+    candidatesRemaining = lines[23].strip()
 
     retVal.append(lines[2].strip().split(',')[0])
     votes = lines[2].strip().split(',')[1]
@@ -121,6 +124,7 @@ def parseFile(lines):
     votes = lines[14].strip().split(',')[1]
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append(candidatesRemaining)
         
     return retVal
 
@@ -192,52 +196,59 @@ def get_results(reset=False):
         retVal = getSStoreResults()
         retVal.extend(getHStoreResults())
 #        retVal.extend([3428])
+        if retVal[27] == '':
+            retVal[27] = contestants_number
+        if len(retVal) > 55 and retVal[55] == '':
+            retVal[55] = contestants_number
     else:
-        for i in range(55):
+        for i in range(56):
             retVal.append('')
-#    print(retVal)
+        # Hack
+        global contestants_number
+        retVal[27] = contestants_number
+        retVal[55] = contestants_number
 
-    if retVal[0] == '' or retVal[0] == retVal[27]:
+    if retVal[0] == '' or retVal[0] == retVal[28]:
         top3_1_same_flag = True
     else:
         top3_1_same_flag = False
 
-    if retVal[0] == '' or retVal[3] == retVal[30]:
+    if retVal[0] == '' or retVal[3] == retVal[31]:
         top3_2_same_flag = True
     else:
         top3_2_same_flag = False
 
-    if  retVal[0] == '' or retVal[6] == retVal[33]:
+    if  retVal[0] == '' or retVal[6] == retVal[34]:
         top3_3_same_flag = True
     else:
         top3_3_same_flag = False
 
-    if retVal[0] == '' or retVal[9] == retVal[36]:
+    if retVal[0] == '' or retVal[9] == retVal[37]:
         bottom3_1_same_flag = True
     else:
         bottom3_1_same_flag = False
 
-    if retVal[0] == '' or retVal[12] == retVal[39]:
+    if retVal[0] == '' or retVal[12] == retVal[40]:
         bottom3_2_same_flag = True
     else:
         bottom3_2_same_flag = False
 
-    if retVal[0] == '' or retVal[15] == retVal[42]:
+    if retVal[0] == '' or retVal[15] == retVal[43]:
         bottom3_3_same_flag = True
     else:
         bottom3_3_same_flag = False
 
-    if retVal[0] == '' or retVal[18] == retVal[45]:
+    if retVal[0] == '' or retVal[18] == retVal[46]:
         trending3_1_same_flag = True
     else:
         trending3_1_same_flag = False
 
-    if retVal[0] == '' or retVal[21] == retVal[48]:
+    if retVal[0] == '' or retVal[21] == retVal[49]:
         trending3_2_same_flag = True
     else:
         trending3_2_same_flag = False
 
-    if retVal[0] == '' or retVal[24] == retVal[51]:
+    if retVal[0] == '' or retVal[24] == retVal[52]:
         trending3_3_same_flag = True
     else:
         trending3_3_same_flag = False
@@ -253,12 +264,15 @@ def get_results(reset=False):
         sstore_top3_3_votes = retVal[7], 
         sstore_top3_3_percentage = retVal[8], 
 
+        sstore_bottom3_1_number = str(int(retVal[27])),
         sstore_bottom3_1_name = retVal[9], 
         sstore_bottom3_1_votes = retVal[10], 
         sstore_bottom3_1_percentage = retVal[11], 
+        sstore_bottom3_2_number = str(int(retVal[27])-1),
         sstore_bottom3_2_name = retVal[12], 
         sstore_bottom3_2_votes = retVal[13], 
         sstore_bottom3_2_percentage = retVal[14], 
+        sstore_bottom3_3_number = str(int(retVal[27])-1),
         sstore_bottom3_3_name = retVal[15], 
         sstore_bottom3_3_votes = retVal[16], 
         sstore_bottom3_3_percentage = retVal[17],
@@ -272,37 +286,41 @@ def get_results(reset=False):
         sstore_trending3_3_name = retVal[24], 
         sstore_trending3_3_votes = retVal[25], 
         sstore_trending3_3_percentage = retVal[26],
+        sstore_candidates_remaining = retVal[27],
 
-        hstore_top3_1_name = retVal[27], 
-        hstore_top3_1_votes = retVal[28], 
-        hstore_top3_1_percentage = retVal[29],  
-        hstore_top3_2_name = retVal[30], 
-        hstore_top3_2_votes = retVal[31], 
-        hstore_top3_2_percentage = retVal[32], 
-        hstore_top3_3_name = retVal[33], 
-        hstore_top3_3_votes = retVal[34], 
-        hstore_top3_3_percentage = retVal[35], 
+        hstore_top3_1_name = retVal[28], 
+        hstore_top3_1_votes = retVal[29], 
+        hstore_top3_1_percentage = retVal[30],  
+        hstore_top3_2_name = retVal[31], 
+        hstore_top3_2_votes = retVal[32], 
+        hstore_top3_2_percentage = retVal[33], 
+        hstore_top3_3_name = retVal[34], 
+        hstore_top3_3_votes = retVal[35], 
+        hstore_top3_3_percentage = retVal[36], 
 
-        hstore_bottom3_1_name = retVal[36], 
-        hstore_bottom3_1_votes = retVal[37], 
-        hstore_bottom3_1_percentage = retVal[38], 
-        hstore_bottom3_2_name = retVal[39], 
-        hstore_bottom3_2_votes = retVal[40], 
-        hstore_bottom3_2_percentage = retVal[41],
-        hstore_bottom3_3_name = retVal[42], 
-        hstore_bottom3_3_votes = retVal[43], 
-        hstore_bottom3_3_percentage = retVal[44], 
+        hstore_bottom3_1_number = str(int(retVal[55])),
+        hstore_bottom3_1_name = retVal[37], 
+        hstore_bottom3_1_votes = retVal[38], 
+        hstore_bottom3_1_percentage = retVal[39], 
+        hstore_bottom3_2_number = str(int(retVal[55])-1),
+        hstore_bottom3_2_name = retVal[40], 
+        hstore_bottom3_2_votes = retVal[41], 
+        hstore_bottom3_2_percentage = retVal[42],
+        hstore_bottom3_3_number = str(int(retVal[55])-2),
+        hstore_bottom3_3_name = retVal[43], 
+        hstore_bottom3_3_votes = retVal[44], 
+        hstore_bottom3_3_percentage = retVal[45], 
 
-        hstore_trending3_1_name = retVal[45], 
-        hstore_trending3_1_votes = retVal[46], 
-        hstore_trending3_1_percentage = retVal[47],
-        hstore_trending3_2_name = retVal[48], 
-        hstore_trending3_2_votes = retVal[49], 
-        hstore_trending3_2_percentage = retVal[50], 
-        hstore_trending3_3_name = retVal[51], 
-        hstore_trending3_3_votes = retVal[52], 
-        hstore_trending3_3_percentage = retVal[53],
-#        removal_votes = retVal[54],
+        hstore_trending3_1_name = retVal[46], 
+        hstore_trending3_1_votes = retVal[47], 
+        hstore_trending3_1_percentage = retVal[48],
+        hstore_trending3_2_name = retVal[49], 
+        hstore_trending3_2_votes = retVal[50], 
+        hstore_trending3_2_percentage = retVal[51], 
+        hstore_trending3_3_name = retVal[52], 
+        hstore_trending3_3_votes = retVal[53], 
+        hstore_trending3_3_percentage = retVal[54],
+        hstore_candidates_remaining = retVal[55],
 
         top3_1_same = top3_1_same_flag,
         top3_2_same = top3_2_same_flag,
@@ -326,8 +344,8 @@ def home():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        print('python ' + sys.argv[0] + ' <remote server> <S-Store log file> <H-Store log file>')
+    if len(sys.argv) < 5:
+        print('python ' + sys.argv[0] + ' <remote server> <S-Store log file> <H-Store log file> <Number of contestants>')
         sys.exit(2)
 
     global remoteserver
@@ -336,6 +354,8 @@ if __name__ == '__main__':
     sstorelogfile = sys.argv[2]
     global hstorelogfile
     hstorelogfile = sys.argv[3]
+    global contestants_number
+    contestants_number = int(sys.argv[4])
 
     if debug:
         app.run(host='127.0.0.1', port=8081, debug=True)

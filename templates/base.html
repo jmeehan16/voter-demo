@@ -57,6 +57,7 @@
               document.getElementById('sstore_top3_3_votes').style.backgroundColor = tdBgColorGrey;
               document.getElementById('sstore_top3_3_percentage').style.backgroundColor = tdBgColorGrey;
           }
+          $("#sstore_bottom3_1_number").text(data.sstore_bottom3_1_number);
           $("#sstore_bottom3_1_name").text(data.sstore_bottom3_1_name);
           $("#sstore_bottom3_1_votes").text(data.sstore_bottom3_1_votes);
           $("#sstore_bottom3_1_percentage").text(data.sstore_bottom3_1_percentage);
@@ -69,6 +70,7 @@
               document.getElementById('sstore_bottom3_1_votes').style.backgroundColor = tdBgColorGrey;
               document.getElementById('sstore_bottom3_1_percentage').style.backgroundColor = tdBgColorGrey;
           }
+          $("#sstore_bottom3_2_number").text(data.sstore_bottom3_2_number);
           $("#sstore_bottom3_2_name").text(data.sstore_bottom3_2_name);
           $("#sstore_bottom3_2_votes").text(data.sstore_bottom3_2_votes);
           $("#sstore_bottom3_2_percentage").text(data.sstore_bottom3_2_percentage);
@@ -81,6 +83,7 @@
               document.getElementById('sstore_bottom3_2_votes').style.backgroundColor = tdBgColorWhite;
               document.getElementById('sstore_bottom3_2_percentage').style.backgroundColor = tdBgColorWhite;
           }
+          $("#sstore_bottom3_3_number").text(data.sstore_bottom3_3_number);
           $("#sstore_bottom3_3_name").text(data.sstore_bottom3_3_name);
           $("#sstore_bottom3_3_votes").text(data.sstore_bottom3_3_votes);
           $("#sstore_bottom3_3_percentage").text(data.sstore_bottom3_3_percentage);
@@ -166,6 +169,7 @@
               document.getElementById('hstore_top3_3_votes').style.backgroundColor = tdBgColorGrey;
               document.getElementById('hstore_top3_3_percentage').style.backgroundColor = tdBgColorGrey;
           }
+          $("#hstore_bottom3_1_number").text(data.hstore_bottom3_1_number);
           $("#hstore_bottom3_1_name").text(data.hstore_bottom3_1_name);
           $("#hstore_bottom3_1_votes").text(data.hstore_bottom3_1_votes);
           $("#hstore_bottom3_1_percentage").text(data.hstore_bottom3_1_percentage);
@@ -178,6 +182,7 @@
               document.getElementById('hstore_bottom3_1_votes').style.backgroundColor = tdBgColorGrey;
               document.getElementById('hstore_bottom3_1_percentage').style.backgroundColor = tdBgColorGrey;
           }
+          $("#hstore_bottom3_2_number").text(data.hstore_bottom3_2_number);
           $("#hstore_bottom3_2_name").text(data.hstore_bottom3_2_name);
           $("#hstore_bottom3_2_votes").text(data.hstore_bottom3_2_votes);
           $("#hstore_bottom3_2_percentage").text(data.hstore_bottom3_2_percentage);
@@ -190,6 +195,7 @@
               document.getElementById('hstore_bottom3_2_votes').style.backgroundColor = tdBgColorWhite;
               document.getElementById('hstore_bottom3_2_percentage').style.backgroundColor = tdBgColorWhite;
           }
+          $("#hstore_bottom3_3_number").text(data.hstore_bottom3_3_number);
           $("#hstore_bottom3_3_name").text(data.hstore_bottom3_3_name);
           $("#hstore_bottom3_3_votes").text(data.hstore_bottom3_3_votes);
           $("#hstore_bottom3_3_percentage").text(data.hstore_bottom3_3_percentage);
@@ -239,8 +245,9 @@
               document.getElementById('hstore_trending3_3_percentage').style.backgroundColor = tdBgColorGrey;
           }
           $("#removal_votes").text(data.removal_votes);
+          $("#candidates_remaining").text(data.sstore_candidates_remaining);
       });
-    }, 5)
+    }, 500)
     
   );
 </script>
