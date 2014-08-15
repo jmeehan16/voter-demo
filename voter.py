@@ -85,6 +85,7 @@ def parseFile(lines):
     totalVotes = lines[17].strip()
     trendingVotes = lines[20].strip()
     candidatesRemaining = lines[23].strip()
+    votesTilNextDelete = lines[29].strip()
 
     retVal.append(lines[2].strip().split(',')[0])
     votes = lines[2].strip().split(',')[1]
@@ -125,6 +126,7 @@ def parseFile(lines):
     retVal.append(votes)
     retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
     retVal.append(candidatesRemaining)
+    retVal.append(votesTilNextDelete)
         
     return retVal
 
@@ -197,63 +199,63 @@ def get_results(reset=False):
         retVal = getSStoreResults()
         retVal.extend(getHStoreResults())
 #        retVal.extend([3428])
-        if len(retVal) < 56:
+        if len(retVal) < 58:
             retVal = []
-            for i in range(56):
+            for i in range(58):
                 retVal.append('')
         if retVal[27] == '':
             retVal[27] = contestants_number
-        if retVal[55] == '':
-            retVal[55] = contestants_number
+        if retVal[56] == '':
+            retVal[56] = contestants_number
     else:
-        for i in range(56):
+        for i in range(58):
             retVal.append('')
         # Hack
         global contestants_number
         retVal[27] = contestants_number
-        retVal[55] = contestants_number
+        retVal[56] = contestants_number
 
-    if retVal[0] == '' or retVal[0] == retVal[28]:
+    if retVal[0] == '' or retVal[0] == retVal[29]:
         top3_1_same_flag = True
     else:
         top3_1_same_flag = False
 
-    if retVal[0] == '' or retVal[3] == retVal[31]:
+    if retVal[0] == '' or retVal[3] == retVal[32]:
         top3_2_same_flag = True
     else:
         top3_2_same_flag = False
 
-    if  retVal[0] == '' or retVal[6] == retVal[34]:
+    if  retVal[0] == '' or retVal[6] == retVal[35]:
         top3_3_same_flag = True
     else:
         top3_3_same_flag = False
 
-    if retVal[0] == '' or retVal[9] == retVal[37]:
+    if retVal[0] == '' or retVal[9] == retVal[38]:
         bottom3_3_same_flag = True
     else:
         bottom3_3_same_flag = False
 
-    if retVal[0] == '' or retVal[12] == retVal[40]:
+    if retVal[0] == '' or retVal[12] == retVal[41]:
         bottom3_2_same_flag = True
     else:
         bottom3_2_same_flag = False
 
-    if retVal[0] == '' or retVal[15] == retVal[43]:
+    if retVal[0] == '' or retVal[15] == retVal[44]:
         bottom3_1_same_flag = True
     else:
         bottom3_1_same_flag = False
 
-    if retVal[0] == '' or retVal[18] == retVal[46]:
+    if retVal[0] == '' or retVal[18] == retVal[47]:
         trending3_1_same_flag = True
     else:
         trending3_1_same_flag = False
 
-    if retVal[0] == '' or retVal[21] == retVal[49]:
+    if retVal[0] == '' or retVal[21] == retVal[50]:
         trending3_2_same_flag = True
     else:
         trending3_2_same_flag = False
 
-    if retVal[0] == '' or retVal[24] == retVal[52]:
+    if retVal[0] == '' or retVal[24] == retVal[53]:
         trending3_3_same_flag = True
     else:
         trending3_3_same_flag = False
@@ -292,40 +294,42 @@ def get_results(reset=False):
         sstore_trending3_3_votes = retVal[25], 
         sstore_trending3_3_percentage = retVal[26],
         sstore_candidates_remaining = retVal[27],
+        sstore_votes_til_next_delete = retVal[28],
 
-        hstore_top3_1_name = retVal[28], 
-        hstore_top3_1_votes = retVal[29], 
-        hstore_top3_1_percentage = retVal[30],  
-        hstore_top3_2_name = retVal[31], 
-        hstore_top3_2_votes = retVal[32], 
-        hstore_top3_2_percentage = retVal[33], 
-        hstore_top3_3_name = retVal[34], 
-        hstore_top3_3_votes = retVal[35], 
-        hstore_top3_3_percentage = retVal[36], 
+        hstore_top3_1_name = retVal[29], 
+        hstore_top3_1_votes = retVal[30], 
+        hstore_top3_1_percentage = retVal[31],  
+        hstore_top3_2_name = retVal[32], 
+        hstore_top3_2_votes = retVal[33], 
+        hstore_top3_2_percentage = retVal[34], 
+        hstore_top3_3_name = retVal[35], 
+        hstore_top3_3_votes = retVal[36], 
+        hstore_top3_3_percentage = retVal[37], 
 
-        hstore_bottom3_3_number = str(int(retVal[55])),
-        hstore_bottom3_3_name = retVal[37], 
-        hstore_bottom3_3_votes = retVal[38], 
-        hstore_bottom3_3_percentage = retVal[39], 
-        hstore_bottom3_2_number = str(int(retVal[55])-1),
-        hstore_bottom3_2_name = retVal[40], 
-        hstore_bottom3_2_votes = retVal[41], 
-        hstore_bottom3_2_percentage = retVal[42],
-        hstore_bottom3_1_number = str(int(retVal[55])-2),
-        hstore_bottom3_1_name = retVal[43], 
-        hstore_bottom3_1_votes = retVal[44], 
-        hstore_bottom3_1_percentage = retVal[45], 
+        hstore_bottom3_3_number = str(int(retVal[56])),
+        hstore_bottom3_3_name = retVal[38], 
+        hstore_bottom3_3_votes = retVal[39], 
+        hstore_bottom3_3_percentage = retVal[40], 
+        hstore_bottom3_2_number = str(int(retVal[56])-1),
+        hstore_bottom3_2_name = retVal[41], 
+        hstore_bottom3_2_votes = retVal[42], 
+        hstore_bottom3_2_percentage = retVal[43],
+        hstore_bottom3_1_number = str(int(retVal[56])-2),
+        hstore_bottom3_1_name = retVal[44], 
+        hstore_bottom3_1_votes = retVal[45], 
+        hstore_bottom3_1_percentage = retVal[46], 
 
-        hstore_trending3_1_name = retVal[46], 
-        hstore_trending3_1_votes = retVal[47], 
-        hstore_trending3_1_percentage = retVal[48],
-        hstore_trending3_2_name = retVal[49], 
-        hstore_trending3_2_votes = retVal[50], 
-        hstore_trending3_2_percentage = retVal[51], 
-        hstore_trending3_3_name = retVal[52], 
-        hstore_trending3_3_votes = retVal[53], 
-        hstore_trending3_3_percentage = retVal[54],
-        hstore_candidates_remaining = retVal[55],
+        hstore_trending3_1_name = retVal[47], 
+        hstore_trending3_1_votes = retVal[48], 
+        hstore_trending3_1_percentage = retVal[49],
+        hstore_trending3_2_name = retVal[50], 
+        hstore_trending3_2_votes = retVal[51], 
+        hstore_trending3_2_percentage = retVal[52], 
+        hstore_trending3_3_name = retVal[53], 
+        hstore_trending3_3_votes = retVal[54], 
+        hstore_trending3_3_percentage = retVal[55],
+        hstore_candidates_remaining = retVal[56],
+        hstore_votes_til_next_delete = retVal[57],
 
         top3_1_same = top3_1_same_flag,
         top3_2_same = top3_2_same_flag,
