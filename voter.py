@@ -152,7 +152,7 @@ def start_voting():
     sstorepid = os.fork()
     if sstorepid == 0:  # Running S-Store benchmark on the local
         os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=10 -Dclient.txnrate=10 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=1000000'
+        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=100 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=1000000'
         os.system(cmd)
 #        os.chdir('../voter-demo')
         os._exit(0)
@@ -160,7 +160,8 @@ def start_voting():
         hstorepid = os.fork()
         if hstorepid == 0: # Running H-Store benchmark on the remote
             baseDir = '/'.join(hstorelogfile.split('/')[:-2])
-            cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=10 -Dclient.txnrate=10 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=1000000"'
+            print ("BASE DIR: " + baseDir)
+            cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=100 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=1000000"'
             cmd = 'ssh ' + remoteserver + ' ' + cmd
             print(cmd)
             os.system(cmd)
@@ -357,6 +358,7 @@ if __name__ == '__main__':
         print('python ' + sys.argv[0] + ' <remote server> <S-Store log file> <H-Store log file> <Number of contestants>')
         sys.exit(2)
 
+    print('starting server!')
     global remoteserver
     remoteserver = sys.argv[1]
     global sstorelogfile
@@ -365,6 +367,8 @@ if __name__ == '__main__':
     hstorelogfile = sys.argv[3]
     global contestants_number
     contestants_number = int(sys.argv[4])
+
+    print remoteserver
 
     if debug:
         app.run(host='127.0.0.1', port=8081, debug=True)
