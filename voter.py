@@ -85,7 +85,7 @@ def parseFile(lines):
     totalVotes = lines[17].strip()
     trendingVotes = lines[20].strip()
     candidatesRemaining = lines[23].strip()
-    votesTilNextDelete = lines[29].strip()
+    votesTilNextDelete = lines[26].strip()
 
     retVal.append(lines[2].strip().split(',')[0])
     votes = lines[2].strip().split(',')[1]
@@ -152,7 +152,7 @@ def start_voting():
     sstorepid = os.fork()
     if sstorepid == 0:  # Running S-Store benchmark on the local
         os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=100 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=1000000'
+        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=1000000'
         os.system(cmd)
 #        os.chdir('../voter-demo')
         os._exit(0)
@@ -161,7 +161,7 @@ def start_voting():
         if hstorepid == 0: # Running H-Store benchmark on the remote
             baseDir = '/'.join(hstorelogfile.split('/')[:-2])
             print ("BASE DIR: " + baseDir)
-            cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=1 -Dclient.txnrate=100 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=1000000"'
+            cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=30 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=1000000"'
             cmd = 'ssh ' + remoteserver + ' ' + cmd
             print(cmd)
             os.system(cmd)
