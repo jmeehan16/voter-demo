@@ -65,9 +65,10 @@ def getSStoreResults():
 
 def getHStoreResults():
     try:
-        cmd = 'scp ' + remoteserver + ':' +hstorelogfile + ' ' + hstorelogfile
-	print(cmd)
-        os.system(cmd)
+        if remoteserver != "localhost":
+            cmd = 'scp ' + remoteserver + ':' +hstorelogfile + ' ' + hstorelogfile
+            print(cmd)
+            os.system(cmd)
         f = open(hstorelogfile, 'r')
         lines = f.readlines()
         f.close()
@@ -152,20 +153,27 @@ def start_voting():
     sstorepid = os.fork()
     if sstorepid == 0:  # Running S-Store benchmark on the local
         os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=1000000'
+        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=200000'
         os.system(cmd)
 #        os.chdir('../voter-demo')
         os._exit(0)
     else:
         hstorepid = os.fork()
         if hstorepid == 0: # Running H-Store benchmark on the remote
-            baseDir = '/'.join(hstorelogfile.split('/')[:-2])
-            print ("BASE DIR: " + baseDir)
-            cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=30 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=1000000"'
-            cmd = 'ssh ' + remoteserver + ' ' + cmd
-            print(cmd)
-            os.system(cmd)
-            os._exit(0)
+            if remoteserver == "localhost":
+                os.chdir(baseDir + "/demo")
+                cmd = 'python simulatehstore.py'
+                print(cmd)
+                os.system(cmd)
+                os._exit(0)
+            else:
+                baseDir = '/'.join(hstorelogfile.split('/')[:-2])
+                print ("BASE DIR: " + baseDir)
+                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=200000"'
+                cmd = 'ssh ' + remoteserver + ' ' + cmd
+                print(cmd)
+                os.system(cmd)
+                os._exit(0)
         else:
             return
 
