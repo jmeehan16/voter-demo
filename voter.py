@@ -222,7 +222,7 @@ def start_voting():
     sstorepid = os.fork()
     if sstorepid == 0:  # Running S-Store benchmark on the local
         os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=200000 -Dnoshutdown=false'
+        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=150000 -Dnoshutdown=false'
         os.system(cmd)
 #        os.chdir('../voter-demo')
         os._exit(0)
@@ -238,7 +238,7 @@ def start_voting():
             else:
                 baseDir = '/'.join(hstorelogfile.split('/')[:-2])
                 print ("BASE DIR: " + baseDir)
-                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=200000 -Dnoshutdown=false"'
+                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=150000 -Dnoshutdown=false"'
                 cmd = 'ssh ' + remoteserver + ' ' + cmd
                 print(cmd)
                 os.system(cmd)
