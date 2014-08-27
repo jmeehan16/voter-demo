@@ -314,7 +314,6 @@ def get_results(reset=False):
             hstorecontestants[contestant] = True
         sortedSStoreContestants = sorted(sstorecontestants.items())
         sortedHStoreContestants = sorted(hstorecontestants.items())
-    print(sortedSStoreContestants)
 
 
     if retVal[0] == '' or retVal[0] == retVal[29]:
