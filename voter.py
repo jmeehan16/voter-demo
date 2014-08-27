@@ -25,20 +25,33 @@ debug = False
 # ================
 
 # default values
-remoteserver = 'istc3'
-hstorelogfile = '/home/jdu/insertinto/h-store/logs/demohstorecurrent.txt'
-sstorelogfile = '/home/jdu/insertinto/h-store/logs/demosstorecurrent.txt'
-contestants_number = 25
+# remoteserver = 'istc3'
+# hstorelogfile = '/home/jdu/insertinto/h-store/logs/demohstorecurrent.txt'
+# sstorelogfile = '/home/jdu/insertinto/h-store/logs/demosstorecurrent.txt'
+# contestants_number = 25
 
-try:
-    remoteremove = 'rm ' + hstorelogfile
-    os.system('rm ' + hstorelogfile)
-    os.system('ssh ' + remoteserver + ' "' + remoteremove + '"')
-    remoteremove = 'rm ' + sstorelogfile
-    os.system('rm ' + sstorelogfile)
-    os.system('ssh ' + remoteserver + ' "' + remoteremove + '"')
-except (OSError, IOError) as e:
-    pass
+# try:
+#     remoteremove = 'rm ' + hstorelogfile
+#     os.system('rm ' + hstorelogfile)
+#     os.system('ssh ' + remoteserver + ' "' + remoteremove + '"')
+#     remoteremove = 'rm ' + sstorelogfile
+#     os.system('rm ' + sstorelogfile)
+#     os.system('ssh ' + remoteserver + ' "' + remoteremove + '"')
+# except (OSError, IOError) as e:
+#     pass
+
+contestantFile = 'contestants'
+contestantLines = open(contestantFile, 'r').readlines()
+contestantList = [contestant[:-1] for contestant in contestantLines]
+sstorecontestants = {}
+hstorecontestants = {}
+for contestant in contestantList:
+    # key: name; value: flag for alive
+    sstorecontestants[contestant] = True
+    hstorecontestants[contestant] = True
+#contestants.sort(key=lambda s: s.split()[1])
+sortedSStoreContestants = sorted(sstorecontestants.items())
+sortedHStoreContestants = sorted(hstorecontestants.items())
 
 top3_1_same_flag = True
 top3_2_same_flag = True
@@ -49,6 +62,45 @@ bottom3_3_same_flag = True
 trending3_1_same_flag = True
 trending3_2_same_flag = True
 trending3_3_same_flag = True
+
+def getSStoreContestants():
+    sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
+    try:
+        f = open(sstorecontestantfile, 'r')
+        buf = f.read()
+        f.close()
+        parseContestants(buf, True)
+    except (OSError, IOError) as e:
+	pass
+
+
+def getHStoreContestants():
+    hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
+    try:
+        f = open(hstorecontestantfile, 'r')
+        buf = f.read()
+        f.close()
+        parseContestants(buf, False)
+    except (OSError, IOError) as e:
+	pass
+
+
+def parseContestants(buf, sstoreflag):
+    global sstorecontestants
+    global hstorecontestants
+    bufs = re.compile('--*\n').split(buf)
+
+    deletedBuf = bufs[1]
+    deletedStr = deletedBuf.split('**RemovedContestants**\n')
+    if len(deletedStr) > 1:
+        deletedList = deletedStr[1].split('\n')
+        deletedNames = [d.split(',')[1] for d in deletedList[:-1]]
+        for deletedName in deletedNames:
+            if sstoreflag == True:
+                sstorecontestants[deletedName] = False
+            else:
+                hstorecontestants[deletedName] = False
+
 
 def getSStoreResults():
     try:
@@ -153,7 +205,7 @@ def start_voting():
     sstorepid = os.fork()
     if sstorepid == 0:  # Running S-Store benchmark on the local
         os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=200000'
+        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=200000 -Dnoshutdown=false'
         os.system(cmd)
 #        os.chdir('../voter-demo')
         os._exit(0)
@@ -169,7 +221,7 @@ def start_voting():
             else:
                 baseDir = '/'.join(hstorelogfile.split('/')[:-2])
                 print ("BASE DIR: " + baseDir)
-                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=200000"'
+                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=200000 -Dnoshutdown=false"'
                 cmd = 'ssh ' + remoteserver + ' ' + cmd
                 print(cmd)
                 os.system(cmd)
@@ -179,14 +231,11 @@ def start_voting():
 
 
 
-@app.route('/_get_removal_votes')
-def get_removal_votes():
-    return jsonify(removal_votes = 3428)
-
-
-
 @app.route('/_reset_results')
 def reset_results():
+    global contestantList
+    global sstorecontestants
+    global hstorecontestants
     try:
         cmd = 'rm ' + sstorelogfile
         os.system(cmd)
@@ -194,6 +243,16 @@ def reset_results():
         cmd = 'rm ' + hstorelogfile
         os.system(cmd)
         os.system('ssh ' + remoteserver + ' "' + cmd + '"')
+        
+        sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
+        os.system('rm ' + sstorecontestantfile)
+        hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
+        os.system('rm ' + hstorecontestantfile)
+
+        for contestant in contestantList:
+            # key: name; value: flag for alive
+            sstorecontestants[contestant] = True
+            hstorecontestants[contestant] = True
     except (OSError, IOError) as e:
         pass
     get_results(reset=True)
@@ -203,11 +262,20 @@ def reset_results():
 @app.route('/_get_results')
 def get_results(reset=False):
     global contestants_number
+    global sstorecontestants
+    global hstorecontestants
+    global sortedSStoreContestants
+    global sortedHStoreContestants
     retVal = ['']
     if reset == False:
+        getSStoreContestants()
+        getHStoreContestants()
+        sortedSStoreContestants = sorted(sstorecontestants.items())
+        sortedHStoreContestants = sorted(hstorecontestants.items())
+#        print(sortedSStoreContestants)
+
         retVal = getSStoreResults()
         retVal.extend(getHStoreResults())
-#        retVal.extend([3428])
         if len(retVal) < 58:
             retVal = []
             for i in range(58):
@@ -348,7 +416,58 @@ def get_results(reset=False):
         bottom3_3_same = bottom3_3_same_flag,
         trending3_1_same = trending3_1_same_flag,
         trending3_2_same = trending3_2_same_flag,
-        trending3_3_same = trending3_3_same_flag
+        trending3_3_same = trending3_3_same_flag,
+
+        sstore_contestants_1_name = sortedSStoreContestants[0][0],
+        sstore_contestants_1_alive = sortedSStoreContestants[0][1],
+        sstore_contestants_2_name = sortedSStoreContestants[1][0],
+        sstore_contestants_2_alive = sortedSStoreContestants[1][1],
+        sstore_contestants_3_name = sortedSStoreContestants[2][0],
+        sstore_contestants_3_alive = sortedSStoreContestants[2][1],
+        sstore_contestants_4_name = sortedSStoreContestants[3][0],
+        sstore_contestants_4_alive = sortedSStoreContestants[3][1],
+        sstore_contestants_5_name = sortedSStoreContestants[4][0],
+        sstore_contestants_5_alive = sortedSStoreContestants[4][1],
+        sstore_contestants_6_name = sortedSStoreContestants[5][0],
+        sstore_contestants_6_alive = sortedSStoreContestants[5][1],
+        sstore_contestants_7_name = sortedSStoreContestants[6][0],
+        sstore_contestants_7_alive = sortedSStoreContestants[6][1],
+        sstore_contestants_8_name = sortedSStoreContestants[7][0],
+        sstore_contestants_8_alive = sortedSStoreContestants[7][1],
+        sstore_contestants_9_name = sortedSStoreContestants[8][0],
+        sstore_contestants_9_alive = sortedSStoreContestants[8][1],
+        sstore_contestants_10_name = sortedSStoreContestants[9][0],
+        sstore_contestants_10_alive = sortedSStoreContestants[9][1],
+        sstore_contestants_11_name = sortedSStoreContestants[10][0],
+        sstore_contestants_11_alive = sortedSStoreContestants[10][1],
+        sstore_contestants_12_name = sortedSStoreContestants[11][0],
+        sstore_contestants_12_alive = sortedSStoreContestants[11][1],
+
+        hstore_contestants_1_name = sortedHStoreContestants[0][0],
+        hstore_contestants_1_alive = sortedHStoreContestants[0][1],
+        hstore_contestants_2_name = sortedHStoreContestants[1][0],
+        hstore_contestants_2_alive = sortedHStoreContestants[1][1],
+        hstore_contestants_3_name = sortedHStoreContestants[2][0],
+        hstore_contestants_3_alive = sortedHStoreContestants[2][1],
+        hstore_contestants_4_name = sortedHStoreContestants[3][0],
+        hstore_contestants_4_alive = sortedHStoreContestants[3][1],
+        hstore_contestants_5_name = sortedHStoreContestants[4][0],
+        hstore_contestants_5_alive = sortedHStoreContestants[4][1],
+        hstore_contestants_6_name = sortedHStoreContestants[5][0],
+        hstore_contestants_6_alive = sortedHStoreContestants[5][1],
+        hstore_contestants_7_name = sortedHStoreContestants[6][0],
+        hstore_contestants_7_alive = sortedHStoreContestants[6][1],
+        hstore_contestants_8_name = sortedHStoreContestants[7][0],
+        hstore_contestants_8_alive = sortedHStoreContestants[7][1],
+        hstore_contestants_9_name = sortedHStoreContestants[8][0],
+        hstore_contestants_9_alive = sortedHStoreContestants[8][1],
+        hstore_contestants_10_name = sortedHStoreContestants[9][0],
+        hstore_contestants_10_alive = sortedHStoreContestants[9][1],
+        hstore_contestants_11_name = sortedHStoreContestants[10][0],
+        hstore_contestants_11_alive = sortedHStoreContestants[10][1],
+        hstore_contestants_12_name = sortedHStoreContestants[11][0],
+        hstore_contestants_12_alive = sortedHStoreContestants[11][1]
+
     )
     
         
@@ -377,6 +496,14 @@ if __name__ == '__main__':
     contestants_number = int(sys.argv[4])
 
     print remoteserver
+
+    os.system('rm ' + sstorelogfile)
+    os.system('rm ' + hstorelogfile)
+    
+    sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
+    os.system('rm ' + sstorecontestantfile)
+    hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
+    os.system('rm ' + hstorecontestantfile)
 
     if debug:
         app.run(host='127.0.0.1', port=8081, debug=True)

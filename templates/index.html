@@ -4,6 +4,11 @@
 
 {% block page_content %}
     <div class="row">
+        <div class="col-sm-1">
+            <table class="table">
+            </table>
+        </div>
+
         <div class="col-sm-5" id="left">
             <h1 class="text-center">
             <table class="table">
@@ -23,10 +28,39 @@
             </table>
             </h1>
         </div>
+
+        <div class="col-sm-1">
+            <table class="table">
+            </table>
+        </div>
     
     </div>
     
     <div class="row">
+        <div class="col-sm-1" id="sstorecontestants">
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th><Strong>Contestants</Strong></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td id="sstore_contestants_1_name"/></tr>
+                        <tr><td id="sstore_contestants_2_name"/></tr>
+                        <tr><td id="sstore_contestants_3_name"/></tr>
+                        <tr><td id="sstore_contestants_4_name"/></tr>
+                        <tr><td id="sstore_contestants_5_name"/></tr>
+                        <tr><td id="sstore_contestants_6_name"/></tr>
+                        <tr><td id="sstore_contestants_7_name"/></tr>
+                        <tr><td id="sstore_contestants_8_name"/></tr>
+                        <tr><td id="sstore_contestants_9_name"/></tr>
+                        <tr><td id="sstore_contestants_10_name"/></tr>
+                        <tr><td id="sstore_contestants_11_name"/></tr>
+                        <tr><td id="sstore_contestants_12_name"/></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="col-sm-5" id="left">
             <div class="widget">
                 <table class="table table-striped">
@@ -106,6 +140,30 @@
 
         </div>
 
+        <div class="col-sm-1" id="hstorecontestants">
+            <div class="widget">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th><Strong>Contestants</Strong></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td id="hstore_contestants_1_name"/></tr>
+                        <tr><td id="hstore_contestants_2_name"/></tr>
+                        <tr><td id="hstore_contestants_3_name"/></tr>
+                        <tr><td id="hstore_contestants_4_name"/></tr>
+                        <tr><td id="hstore_contestants_5_name"/></tr>
+                        <tr><td id="hstore_contestants_6_name"/></tr>
+                        <tr><td id="hstore_contestants_7_name"/></tr>
+                        <tr><td id="hstore_contestants_8_name"/></tr>
+                        <tr><td id="hstore_contestants_9_name"/></tr>
+                        <tr><td id="hstore_contestants_10_name"/></tr>
+                        <tr><td id="hstore_contestants_11_name"/></tr>
+                        <tr><td id="hstore_contestants_12_name"/></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <div class="row">
@@ -114,9 +172,11 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td width="50%" align="left"></td>
-                        <td width="30%" align="right" valign="bottom">Votes till next delete:</td>
-                        <td width="10%" align="center" valign="top" id="votes_til_next_delete" style="font-size:50px;font-weight:bold"></td>
+                        <td width="20%" align="left"></td>
+                        <td width="30%" align="right" valign="bottom">S-Store votes till next delete:</td>
+                        <td width="10%" align="center" valign="top" id="sstore_votes_til_next_delete" style="font-size:50px;font-weight:bold"></td>
+                        <td width="30%" align="right" valign="bottom">S-Store candidates remaining:</td>
+                        <td width="10%" align="left" valign="top" id="sstore_candidates_remaining" style="font-size:50px;font-weight:bold""/>
                     </tr>
                 </thead>
             </table>
@@ -128,8 +188,11 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td width="20%" align="right" valign="bottom">Candidates remaining:</td>
-                        <td width="80%" align="left" valign="top" id="candidates_remaining" style="font-size:50px;font-weight:bold""/>
+                        <td width="20%" align="left"></td>
+                        <td width="30%" align="right" valign="bottom">H-Store votes till next delete:</td>
+                        <td width="10%" align="center" valign="top" id="hstore_votes_til_next_delete" style="font-size:50px;font-weight:bold"></td>
+                        <td width="30%" align="right" valign="bottom">H-Store candidates remaining:</td>
+                        <td width="10%" align="left" valign="top" id="hstore_candidates_remaining" style="font-size:50px;font-weight:bold""/>
                     </tr>
                 </thead>
             </table>
