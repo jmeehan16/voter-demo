@@ -64,6 +64,9 @@ trending3_2_same_flag = True
 trending3_3_same_flag = True
 
 def getSStoreContestants():
+    global contestantList
+    global sstorecontestants
+    global sortedSStoreContestants
     sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
     try:
         f = open(sstorecontestantfile, 'r')
@@ -71,10 +74,16 @@ def getSStoreContestants():
         f.close()
         parseContestants(buf, True)
     except (OSError, IOError) as e:
-	pass
+        for contestant in contestantList:
+            # key: name; value: flag for alive
+            sstorecontestants[contestant] = True
+        sortedSStoreContestants = sorted(sstorecontestants.items())
 
 
 def getHStoreContestants():
+    global contestantList
+    global hstorecontestants
+    global sortedHStoreContestants
     hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
     try:
         if remoteserver != "localhost":
@@ -86,12 +95,16 @@ def getHStoreContestants():
         f.close()
         parseContestants(buf, False)
     except (OSError, IOError) as e:
-	pass
+        for contestant in contestantList:
+            # key: name; value: flag for alive
+            hstorecontestants[contestant] = True
+        sortedHStoreContestants = sorted(hstorecontestants.items())
 
 
 def parseContestants(buf, sstoreflag):
     global sstorecontestants
     global hstorecontestants
+    global contestantList
     bufs = re.compile('--*\n').split(buf)
 
     deletedBuf = bufs[1]
@@ -237,17 +250,16 @@ def start_voting():
 
 @app.route('/_reset_results')
 def reset_results():
-    global contestantList
-    global sstorecontestants
-    global hstorecontestants
     global sstorelogfile
     global hstorelogfile
     global remoteserver
     try:
-        for contestant in contestantList:
-            # key: name; value: flag for alive
-            sstorecontestants[contestant] = True
-            hstorecontestants[contestant] = True
+        sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
+        os.system('rm ' + sstorecontestantfile)
+        os.system('ssh ' + remoteserver + ' "rm ' + sstorecontestantfile + '"')
+        hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
+        os.system('rm ' + hstorecontestantfile)
+        os.system('ssh ' + remoteserver + ' "rm ' + hstorecontestantfile + '"')
 
         cmd = 'rm ' + sstorelogfile
         os.system(cmd)
@@ -255,13 +267,6 @@ def reset_results():
         cmd = 'rm ' + hstorelogfile
         os.system(cmd)
         os.system('ssh ' + remoteserver + ' "' + cmd + '"')
-        
-        sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
-        os.system('rm ' + sstorecontestantfile)
-        os.system('ssh ' + remoteserver + ' "rm ' + sstorecontestantfile + '"')
-        hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
-        os.system('rm ' + hstorecontestantfile)
-        os.system('ssh ' + remoteserver + ' "rm ' + hstorecontestantfile + '"')
 
     except (OSError, IOError) as e:
         print "ERROR: COULD NOT RESET RESULTS"
@@ -273,6 +278,7 @@ def reset_results():
 @app.route('/_get_results')
 def get_results(reset=False):
     global contestants_number
+    global contestantList
     global sstorecontestants
     global hstorecontestants
     global sortedSStoreContestants
@@ -283,7 +289,6 @@ def get_results(reset=False):
         getHStoreContestants()
         sortedSStoreContestants = sorted(sstorecontestants.items())
         sortedHStoreContestants = sorted(hstorecontestants.items())
-#        print(sortedSStoreContestants)
 
         retVal = getSStoreResults()
         retVal.extend(getHStoreResults())
@@ -302,6 +307,15 @@ def get_results(reset=False):
         global contestants_number
         retVal[27] = contestants_number
         retVal[56] = contestants_number
+
+        for contestant in contestantList:
+            # key: name; value: flag for alive
+            sstorecontestants[contestant] = True
+            hstorecontestants[contestant] = True
+        sortedSStoreContestants = sorted(sstorecontestants.items())
+        sortedHStoreContestants = sorted(hstorecontestants.items())
+    print(sortedSStoreContestants)
+
 
     if retVal[0] == '' or retVal[0] == retVal[29]:
         top3_1_same_flag = True
