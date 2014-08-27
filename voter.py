@@ -77,6 +77,10 @@ def getSStoreContestants():
 def getHStoreContestants():
     hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
     try:
+        if remoteserver != "localhost":
+            cmd = 'scp ' + remoteserver + ':' +hstorecontestantfile + ' ' + hstorecontestantfile
+            print(cmd)
+            os.system(cmd)
         f = open(hstorecontestantfile, 'r')
         buf = f.read()
         f.close()
@@ -169,15 +173,15 @@ def parseFile(lines):
     retVal.append(lines[12].strip().split(',')[0])
     votes = lines[12].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)))#*100.0/int(totalVotes)))
     retVal.append(lines[13].strip().split(',')[0])
     votes = lines[13].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)))#*100.0/int(totalVotes)))
     retVal.append(lines[14].strip().split(',')[0])
     votes = lines[14].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)))#*100.0/int(totalVotes)))
     retVal.append(candidatesRemaining)
     retVal.append(votesTilNextDelete)
         
@@ -236,7 +240,15 @@ def reset_results():
     global contestantList
     global sstorecontestants
     global hstorecontestants
+    global sstorelogfile
+    global hstorelogfile
+    global remoteserver
     try:
+        for contestant in contestantList:
+            # key: name; value: flag for alive
+            sstorecontestants[contestant] = True
+            hstorecontestants[contestant] = True
+
         cmd = 'rm ' + sstorelogfile
         os.system(cmd)
         os.system('ssh ' + remoteserver + ' "' + cmd + '"')
@@ -246,14 +258,13 @@ def reset_results():
         
         sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
         os.system('rm ' + sstorecontestantfile)
+        os.system('ssh ' + remoteserver + ' "rm ' + sstorecontestantfile + '"')
         hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
         os.system('rm ' + hstorecontestantfile)
+        os.system('ssh ' + remoteserver + ' "rm ' + hstorecontestantfile + '"')
 
-        for contestant in contestantList:
-            # key: name; value: flag for alive
-            sstorecontestants[contestant] = True
-            hstorecontestants[contestant] = True
     except (OSError, IOError) as e:
+        print "ERROR: COULD NOT RESET RESULTS"
         pass
     get_results(reset=True)
 
@@ -352,11 +363,11 @@ def get_results(reset=False):
         sstore_bottom3_3_name = retVal[9], 
         sstore_bottom3_3_votes = retVal[10], 
         sstore_bottom3_3_percentage = retVal[11], 
-        sstore_bottom3_2_number = str(int(retVal[27])-1),
+        sstore_bottom3_2_number = str(int(retVal[27])-1) if int(retVal[27])-1 > 0 else '-',
         sstore_bottom3_2_name = retVal[12], 
         sstore_bottom3_2_votes = retVal[13], 
         sstore_bottom3_2_percentage = retVal[14], 
-        sstore_bottom3_1_number = str(int(retVal[27])-2),
+        sstore_bottom3_1_number = str(int(retVal[27])-2) if int(retVal[27])-2 > 0 else '-',
         sstore_bottom3_1_name = retVal[15], 
         sstore_bottom3_1_votes = retVal[16], 
         sstore_bottom3_1_percentage = retVal[17],
@@ -387,11 +398,11 @@ def get_results(reset=False):
         hstore_bottom3_3_name = retVal[38], 
         hstore_bottom3_3_votes = retVal[39], 
         hstore_bottom3_3_percentage = retVal[40], 
-        hstore_bottom3_2_number = str(int(retVal[56])-1),
+        hstore_bottom3_2_number = str(int(retVal[56])-1) if int(retVal[56])-1 > 0 else '-',
         hstore_bottom3_2_name = retVal[41], 
         hstore_bottom3_2_votes = retVal[42], 
         hstore_bottom3_2_percentage = retVal[43],
-        hstore_bottom3_1_number = str(int(retVal[56])-2),
+        hstore_bottom3_1_number = str(int(retVal[56])-2) if int(retVal[56])-2 > 0 else '-',
         hstore_bottom3_1_name = retVal[44], 
         hstore_bottom3_1_votes = retVal[45], 
         hstore_bottom3_1_percentage = retVal[46], 
