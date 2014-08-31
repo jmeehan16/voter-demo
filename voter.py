@@ -63,6 +63,11 @@ trending3_1_same_flag = True
 trending3_2_same_flag = True
 trending3_3_same_flag = True
 
+hstoreprogress = 0
+sstoreprogress = 0
+hstoreinvalid = 0
+sstoreinvalid = 0
+
 def getSStoreContestants():
     global contestantList
     global sstorecontestants
@@ -124,7 +129,7 @@ def getSStoreResults():
         f = open(sstorelogfile, 'r')
         lines = f.readlines()
         f.close()
-        return parseFile(lines)
+        return parseFile(lines, 's')
     except (OSError, IOError) as e:
         retVal = []
         for i in range(27):
@@ -141,7 +146,7 @@ def getHStoreResults():
         f = open(hstorelogfile, 'r')
         lines = f.readlines()
         f.close()
-        return parseFile(lines)
+        return parseFile(lines, 'h')
     except (OSError, IOError) as e:
         retVal = []
         for i in range(27):
@@ -149,13 +154,18 @@ def getHStoreResults():
         return retVal
 
 
-def parseFile(lines):
+def parseFile(lines, type):
+    global hstoreprogress
+    global sstoreprogress
+    global hstoreinvalid
+    global sstoreinvalid
     retVal = []
 
     totalVotes = lines[17].strip()
     trendingVotes = lines[20].strip()
     candidatesRemaining = lines[23].strip()
     votesTilNextDelete = lines[26].strip()
+    successVotes = lines[29].strip()
 
     retVal.append(lines[2].strip().split(',')[0])
     votes = lines[2].strip().split(',')[1]
@@ -197,6 +207,12 @@ def parseFile(lines):
     retVal.append('%2.1f%%' % (int(votes)))#*100.0/int(totalVotes)))
     retVal.append(candidatesRemaining)
     retVal.append(votesTilNextDelete)
+    if type == 'h':
+        hstoreprogress = int(totalVotes)*100/12535
+        hstoreinvalid = (int(totalVotes) - int(successVotes))*100/int(totalVotes)
+    else:
+        sstoreprogress = int(totalVotes)*100/12535
+        sstoreinvalid = (int(totalVotes) - int(successVotes))*100/int(totalVotes)
         
     return retVal
 
@@ -253,6 +269,14 @@ def reset_results():
     global sstorelogfile
     global hstorelogfile
     global remoteserver
+    global hstoreprogress
+    global sstoreprogress
+    global hstoreinvalid
+    global sstoreinvalid
+    hstoreprogress = 0
+    sstoreprogress = 0
+    hstoreinvalid = 0
+    sstoreinvalid = 0
     try:
         sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
         os.system('rm ' + sstorecontestantfile)
@@ -283,6 +307,10 @@ def get_results(reset=False):
     global hstorecontestants
     global sortedSStoreContestants
     global sortedHStoreContestants
+    global hstoreprogress
+    global sstoreprogress
+    global hstoreinvalid
+    global sstoreinvalid
     retVal = ['']
     if reset == False:
         getSStoreContestants()
@@ -396,6 +424,8 @@ def get_results(reset=False):
         sstore_trending3_3_percentage = retVal[26],
         sstore_candidates_remaining = retVal[27],
         sstore_votes_til_next_delete = retVal[28],
+        sstore_progress = str(sstoreprogress) + '%',
+        sstore_invalid = str(sstoreinvalid) + '%',
 
         hstore_top3_1_name = retVal[29], 
         hstore_top3_1_votes = retVal[30], 
@@ -431,6 +461,8 @@ def get_results(reset=False):
         hstore_trending3_3_percentage = retVal[55],
         hstore_candidates_remaining = retVal[56],
         hstore_votes_til_next_delete = retVal[57],
+        hstore_progress = str(hstoreprogress) + '%',
+        hstore_invalid = str(hstoreinvalid) + '%',
 
         top3_1_same = top3_1_same_flag,
         top3_2_same = top3_2_same_flag,
