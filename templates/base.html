@@ -401,6 +401,11 @@
           } else {
               document.getElementById('hstore_contestants_12_name').style.color = aliveColor;
           }
+
+          if ($(data.sstore_finished > 0)) {
+              var winnerStr = "sstore_contestants_" + data.sstore_finished.toString() + "_name";
+              document.getElementById(winnerStr).style.backgroundColor = tdBgSColorDiff;
+          }
       });
     }, 1000)
     

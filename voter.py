@@ -67,6 +67,7 @@ hstoreprogress = 0
 sstoreprogress = 0
 hstoreinvalid = 0
 sstoreinvalid = 0
+finished = -1
 
 def getSStoreContestants():
     global contestantList
@@ -110,7 +111,12 @@ def parseContestants(buf, sstoreflag):
     global sstorecontestants
     global hstorecontestants
     global contestantList
+    global finished
     bufs = re.compile('--*\n').split(buf)
+
+    remainingBuf = bufs[0]
+    remainingStr = remainingBuf.split('**RemainingContestants**\n')
+    remainingContestants = remainingStr[1].split('\n')
 
     deletedBuf = bufs[1]
     deletedStr = deletedBuf.split('**RemovedContestants**\n')
@@ -122,6 +128,18 @@ def parseContestants(buf, sstoreflag):
                 sstorecontestants[deletedName] = False
             else:
                 hstorecontestants[deletedName] = False
+    if sstoreflag:
+        print "REMAININGCONTESTANTS: " + str(len(remainingContestants))
+        print remainingContestants[0] + "... " + remainingContestants[1]
+    if len(remainingContestants) == 2:
+        remainingName = remainingContestants[0].split(',')[1]
+        if sstoreflag == True:
+            i = 0
+            for item in sortedSStoreContestants:
+                if item[0] == remainingName:
+                    finished = i + 1
+                    break
+                i += 1
 
 
 def getSStoreResults():
@@ -170,28 +188,28 @@ def parseFile(lines, type):
     retVal.append(lines[2].strip().split(',')[0])
     votes = lines[2].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(successVotes)))
     retVal.append(lines[3].strip().split(',')[0])
     votes = lines[3].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(successVotes)))
     retVal.append(lines[4].strip().split(',')[0])
     votes = lines[4].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(successVotes)))
         
     retVal.append(lines[7].strip().split(',')[0])
     votes = lines[7].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(successVotes)))
     retVal.append(lines[8].strip().split(',')[0])
     votes = lines[8].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(successVotes)))
     retVal.append(lines[9].strip().split(',')[0])
     votes = lines[9].strip().split(',')[1]
     retVal.append(votes)
-    retVal.append('%2.1f%%' % (int(votes)*100.0/int(totalVotes)))
+    retVal.append('%2.1f%%' % (int(votes)*100.0/int(successVotes)))
         
     retVal.append(lines[12].strip().split(',')[0])
     votes = lines[12].strip().split(',')[1]
@@ -209,10 +227,10 @@ def parseFile(lines, type):
     retVal.append(votesTilNextDelete)
     if type == 'h':
         hstoreprogress = int(totalVotes)*100/12535
-        hstoreinvalid = (int(totalVotes) - int(successVotes))*100/int(totalVotes)
+        hstoreinvalid = int(totalVotes) - int(successVotes)
     else:
         sstoreprogress = int(totalVotes)*100/12535
-        sstoreinvalid = (int(totalVotes) - int(successVotes))*100/int(totalVotes)
+        sstoreinvalid = int(totalVotes) - int(successVotes)
         
     return retVal
 
@@ -254,7 +272,7 @@ def start_voting():
             else:
                 baseDir = '/'.join(hstorelogfile.split('/')[:-2])
                 print ("BASE DIR: " + baseDir)
-                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=120000 -Dnoshutdown=false"'
+                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=27 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=120000 -Dnoshutdown=false"'
                 cmd = 'ssh ' + remoteserver + ' ' + cmd
                 print(cmd)
                 os.system(cmd)
@@ -273,10 +291,12 @@ def reset_results():
     global sstoreprogress
     global hstoreinvalid
     global sstoreinvalid
+    global finished
     hstoreprogress = 0
     sstoreprogress = 0
     hstoreinvalid = 0
     sstoreinvalid = 0
+    finished = -1
     try:
         sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
         os.system('rm ' + sstorecontestantfile)
@@ -311,6 +331,7 @@ def get_results(reset=False):
     global sstoreprogress
     global hstoreinvalid
     global sstoreinvalid
+    global finished
     retVal = ['']
     if reset == False:
         getSStoreContestants()
@@ -389,6 +410,8 @@ def get_results(reset=False):
     else:
         trending3_3_same_flag = False
 
+    print "REMAINING CONTESTANT: " + str(finished)
+
     return jsonify(
         sstore_top3_1_name = retVal[0], 
         sstore_top3_1_votes = retVal[1], 
@@ -425,7 +448,7 @@ def get_results(reset=False):
         sstore_candidates_remaining = retVal[27],
         sstore_votes_til_next_delete = retVal[28],
         sstore_progress = str(sstoreprogress) + '%',
-        sstore_invalid = str(sstoreinvalid) + '%',
+        sstore_invalid = str(sstoreinvalid),
 
         hstore_top3_1_name = retVal[29], 
         hstore_top3_1_votes = retVal[30], 
@@ -462,7 +485,7 @@ def get_results(reset=False):
         hstore_candidates_remaining = retVal[56],
         hstore_votes_til_next_delete = retVal[57],
         hstore_progress = str(hstoreprogress) + '%',
-        hstore_invalid = str(hstoreinvalid) + '%',
+        hstore_invalid = str(hstoreinvalid),
 
         top3_1_same = top3_1_same_flag,
         top3_2_same = top3_2_same_flag,
@@ -522,8 +545,9 @@ def get_results(reset=False):
         hstore_contestants_11_name = sortedHStoreContestants[10][0],
         hstore_contestants_11_alive = sortedHStoreContestants[10][1],
         hstore_contestants_12_name = sortedHStoreContestants[11][0],
-        hstore_contestants_12_alive = sortedHStoreContestants[11][1]
+        hstore_contestants_12_alive = sortedHStoreContestants[11][1],
 
+        sstore_finished = finished
     )
     
         
