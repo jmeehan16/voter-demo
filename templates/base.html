@@ -249,11 +249,14 @@
           }
           $("#sstore_candidates_remaining").text(data.sstore_candidates_remaining);
           $("#sstore_votes_til_next_delete").text(data.sstore_votes_til_next_delete);
-          $("#sstore_progress").text(data.sstore_progress);
+
+          document.getElementById("sstore_progress").style.width = data.sstore_progress;
+          document.getElementById("sstore_progress").style.backgroundColor = tdBgSColorDiff;
           $("#sstore_invalid").text(data.sstore_invalid);
           $("#hstore_candidates_remaining").text(data.hstore_candidates_remaining);
           $("#hstore_votes_til_next_delete").text(data.hstore_votes_til_next_delete);
-          $("#hstore_progress").text(data.hstore_progress);
+          document.getElementById("hstore_progress").style.width = data.hstore_progress;
+          document.getElementById("hstore_progress").style.backgroundColor = tdBgHColorDiff;
           $("#hstore_invalid").text(data.hstore_invalid);
 
           $("#sstore_contestants_1_name").text(data.sstore_contestants_1_name);
@@ -291,6 +294,7 @@
               document.getElementById('sstore_contestants_6_name').style.color = deletedColor;
           } else {
               document.getElementById('sstore_contestants_6_name').style.color = aliveColor;
+              document.getElementById('sstore_contestants_6_name').style.backgroundColor = tdBgColorWhite;
           }
           $("#sstore_contestants_7_name").text(data.sstore_contestants_7_name);
           if (!data.sstore_contestants_7_alive) {
@@ -402,9 +406,21 @@
               document.getElementById('hstore_contestants_12_name').style.color = aliveColor;
           }
 
-          if ($(data.sstore_finished > 0)) {
-              var winnerStr = "sstore_contestants_" + data.sstore_finished.toString() + "_name";
-              document.getElementById(winnerStr).style.backgroundColor = tdBgSColorDiff;
+          if (data.sstore_finished > 0) {
+            var winnerStr = "sstore_contestants_" + data.sstore_finished.toString() + "_name";
+              if(data.color_reset == 1)
+              {
+                if((data.sstore_finished % 2) == 0)
+                {
+                  document.getElementById(winnerStr).style.backgroundColor = tdBgColorGrey;
+                }
+                else {
+                  document.getElementById(winnerStr).style.backgroundColor = tdBgColorWhite;
+                }
+              }
+              else {
+                document.getElementById(winnerStr).style.backgroundColor = tdBgSColorDiff;
+            }
           }
       });
     }, 1000)

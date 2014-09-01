@@ -68,6 +68,7 @@ sstoreprogress = 0
 hstoreinvalid = 0
 sstoreinvalid = 0
 finished = -1
+c_reset = False
 
 def getSStoreContestants():
     global contestantList
@@ -128,9 +129,6 @@ def parseContestants(buf, sstoreflag):
                 sstorecontestants[deletedName] = False
             else:
                 hstorecontestants[deletedName] = False
-    if sstoreflag:
-        print "REMAININGCONTESTANTS: " + str(len(remainingContestants))
-        print remainingContestants[0] + "... " + remainingContestants[1]
     if len(remainingContestants) == 2:
         remainingName = remainingContestants[0].split(',')[1]
         if sstoreflag == True:
@@ -227,6 +225,8 @@ def parseFile(lines, type):
     retVal.append(votesTilNextDelete)
     if type == 'h':
         hstoreprogress = int(totalVotes)*100/12535
+        if hstoreprogress == 99:
+            hstoreprogress = 100
         hstoreinvalid = int(totalVotes) - int(successVotes)
     else:
         sstoreprogress = int(totalVotes)*100/12535
@@ -256,7 +256,7 @@ def start_voting():
     sstorepid = os.fork()
     if sstorepid == 0:  # Running S-Store benchmark on the local
         os.chdir(baseDir)
-        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=120000 -Dnoshutdown=false'
+        cmd = 'ant hstore-benchmark -Dproject=voterdemosstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=20 -Dglobal.sstore=true -Dglobal.sstore_scheduler=true -Dclient.duration=130000 -Dnoshutdown=false'
         os.system(cmd)
 #        os.chdir('../voter-demo')
         os._exit(0)
@@ -272,7 +272,7 @@ def start_voting():
             else:
                 baseDir = '/'.join(hstorelogfile.split('/')[:-2])
                 print ("BASE DIR: " + baseDir)
-                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=27 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=120000 -Dnoshutdown=false"'
+                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=30 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=130000 -Dnoshutdown=false"'
                 cmd = 'ssh ' + remoteserver + ' ' + cmd
                 print(cmd)
                 os.system(cmd)
@@ -291,12 +291,12 @@ def reset_results():
     global sstoreprogress
     global hstoreinvalid
     global sstoreinvalid
-    global finished
+    global c_reset
     hstoreprogress = 0
     sstoreprogress = 0
     hstoreinvalid = 0
     sstoreinvalid = 0
-    finished = -1
+    c_reset = True
     try:
         sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
         os.system('rm ' + sstorecontestantfile)
@@ -332,6 +332,7 @@ def get_results(reset=False):
     global hstoreinvalid
     global sstoreinvalid
     global finished
+    global c_reset
     retVal = ['']
     if reset == False:
         getSStoreContestants()
@@ -410,7 +411,14 @@ def get_results(reset=False):
     else:
         trending3_3_same_flag = False
 
-    print "REMAINING CONTESTANT: " + str(finished)
+    tmpreset = 0
+    tmpfinished = finished
+    if c_reset:
+        tmpreset = 1
+        c_reset = False
+        finished = -1
+    
+    
 
     return jsonify(
         sstore_top3_1_name = retVal[0], 
@@ -547,7 +555,8 @@ def get_results(reset=False):
         hstore_contestants_12_name = sortedHStoreContestants[11][0],
         hstore_contestants_12_alive = sortedHStoreContestants[11][1],
 
-        sstore_finished = finished
+        sstore_finished = tmpfinished,
+        color_reset = tmpreset
     )
     
         
