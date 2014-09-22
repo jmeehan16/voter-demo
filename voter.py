@@ -264,6 +264,7 @@ def start_voting():
         hstorepid = os.fork()
         if hstorepid == 0: # Running H-Store benchmark on the remote
             if remoteserver == "localhost":
+                print baseDir
                 os.chdir(baseDir + "/demo")
                 cmd = 'python simulatehstore.py'
                 print(cmd)
@@ -272,7 +273,7 @@ def start_voting():
             else:
                 baseDir = '/'.join(hstorelogfile.split('/')[:-2])
                 print ("BASE DIR: " + baseDir)
-                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=30 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=130000 -Dnoshutdown=false"'
+                cmd = '"cd ' + baseDir + '; ant hstore-benchmark -Dproject=voterdemohstorecorrect -Dclient.threads_per_host=5 -Dclient.txnrate=28 -Dglobal.sstore=false -Dglobal.sstore_scheduler=false -Dclient.duration=130000 -Dnoshutdown=false"'
                 cmd = 'ssh ' + remoteserver + ' ' + cmd
                 print(cmd)
                 os.system(cmd)
@@ -300,17 +301,21 @@ def reset_results():
     try:
         sstorecontestantfile = '/'.join(sstorelogfile.split('/')[:-1])+'/sstorecontestants.txt'
         os.system('rm ' + sstorecontestantfile)
-        os.system('ssh ' + remoteserver + ' "rm ' + sstorecontestantfile + '"')
+        if remoteserver != "localhost":
+            os.system('ssh ' + remoteserver + ' "rm ' + sstorecontestantfile + '"')
         hstorecontestantfile = '/'.join(hstorelogfile.split('/')[:-1])+'/hstorecontestants.txt'
         os.system('rm ' + hstorecontestantfile)
-        os.system('ssh ' + remoteserver + ' "rm ' + hstorecontestantfile + '"')
+        if remoteserver != "localhost":
+            os.system('ssh ' + remoteserver + ' "rm ' + hstorecontestantfile + '"')
 
         cmd = 'rm ' + sstorelogfile
         os.system(cmd)
-        os.system('ssh ' + remoteserver + ' "' + cmd + '"')
+        if remoteserver != "localhost":
+            os.system('ssh ' + remoteserver + ' "' + cmd + '"')
         cmd = 'rm ' + hstorelogfile
         os.system(cmd)
-        os.system('ssh ' + remoteserver + ' "' + cmd + '"')
+        if remoteserver != "localhost":
+            os.system('ssh ' + remoteserver + ' "' + cmd + '"')
 
     except (OSError, IOError) as e:
         print "ERROR: COULD NOT RESET RESULTS"
