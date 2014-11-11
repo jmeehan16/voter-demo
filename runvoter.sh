@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python voter.py vmdemo /home/john/git/h-store/logs/demosstorecurrent.txt /home/john/git/h-store/logs/demohstorecurrent.txt 12
+python voter.py vmdemo /home/john/git/s-store/logs/demosstorecurrent.txt /home/john/git/s-store/logs/demohstorecurrent.txt 12
